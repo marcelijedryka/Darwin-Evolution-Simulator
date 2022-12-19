@@ -5,9 +5,6 @@ import java.util.Random;
 
 public class Genotype {
 
-
-
-
     public ArrayList<Integer> rollGenotype(int length){
         ArrayList<Integer> genotype = new ArrayList<>();
         Random roll = new Random();
@@ -17,7 +14,7 @@ public class Genotype {
         return genotype;
     }
 
-    public ArrayList<Integer> offspingGenotype(Animal a1 , Animal a2){
+    public ArrayList<Integer> offspringGenotype(Animal a1 , Animal a2){
         ArrayList<Integer> genotype = new ArrayList<>();
         Random roll = new Random();
         if (a1.getEnergy() > a2.getEnergy()){
@@ -27,6 +24,8 @@ public class Genotype {
         }
         return genotype;
     }
+
+
 
 
 }

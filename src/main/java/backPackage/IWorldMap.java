@@ -52,4 +52,6 @@ public interface IWorldMap {
 
     Vector2d getUpRight();
 
+//    Prawdopodobnie trzeba będzie użyć
+//    public void positionChanged(Vector2d oldPosition, Vector2d newPosition);
 }

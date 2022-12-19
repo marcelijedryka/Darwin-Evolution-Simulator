@@ -63,7 +63,7 @@ public class Field implements IWorldMap {
 //            map.put(animal.getCurrent_position() , animal);
 //            return true;
 //        }
-        return false;
+        return true;
     }
 
     public boolean isOccupied(Vector2d position) {
