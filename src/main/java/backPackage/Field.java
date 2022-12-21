@@ -32,15 +32,11 @@ public class Field implements IWorldMap {
         this.energyboost = energyBoost;
 
         // Generowanie Trawy
-
-        /*
-        * !!!! WAŻNA SPRAWA !!!!
-        *  Aktualna implementacja zakłada, że trawa nie może pojawić się tam, gdzie jest zwierzak. Czy tak ma być?
-         */
+        
         Random roll = new Random();
         while (grassMap.size() < grassAmount){
             Vector2d position = new Vector2d(roll.nextInt(width), roll.nextInt(height));
-            if (!isOccupied(position)){
+            if (!isOccupiedByGrass(position)){
                 grassMap.put(position , new Grass(position));
             }
         }
