@@ -16,12 +16,13 @@ public class Animal {
     private float energy;
     private final IWorldMap map;
 
-    public Animal(IWorldMap map ,int energy ){
+    public Animal(IWorldMap map, int energy ){
         this.currentOrient = MapDirection.NORTH;
         this.energy = energy;
         this.map = map;
         this.geneid = 0;
-        this.setRandomGenotype();
+
+        this.setRandomGenotype(4);
 
     }
 
@@ -29,8 +30,11 @@ public class Animal {
         return genes;
     }
 
-    public void setRandomGenotype(){
-        this.genes = new Genotype().rollGenotype(4);
+    public void setRandomGenotype(int length){
+        /*
+        !!! DO PRZEMYŚLENIA !!!
+         */
+        this.genes = new Genotype().rollGenotype(length);
     }
 
     public void setAncestorGenotype(Animal a1 , Animal a2){

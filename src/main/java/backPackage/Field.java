@@ -1,20 +1,19 @@
 package backPackage;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Field implements IWorldMap {
 
-    //Trzeba będzie przerobić przetrzymywanie animali bo teraz może być ich wiele na jednym polu
+    /*
+    *  Trzeba było zrobić dwie osobne hashlisty dla animali i trawy — PAIN
+    *  */
 
-    private final Map<Vector2d , Object> map = new HashMap<>();
+    private final Map<Vector2d , TreeSet<Animal>> animalMap = new HashMap<>();
+    private final Map<Vector2d , Object> grassMap = new HashMap<>();
 
     private final Vector2d lowLeft;
 
     private final Vector2d upRight;
-
-    private final int width;
 
     private final int energyboost;
 
@@ -22,27 +21,31 @@ public class Field implements IWorldMap {
     private final int growth;
 
     private final int height;
+    private final int width;
 
-    public Field(int height , int width , int amount , int growth , int energyboost){
+    public Field(int height , int width , int grassAmount , int growth , int energyBoost){
         this.width = width;
         this.height = height;
         this.lowLeft = new Vector2d(0,0);
         this.upRight = new Vector2d(height-1,width-1);
         this.growth = growth;
-        this.energyboost = energyboost;
+        this.energyboost = energyBoost;
 
-        // Generowanie Trawy, trzeba będzie zmienić wg wariantu później
+        // Generowanie Trawy
+
+        /*
+        * !!!! WAŻNA SPRAWA !!!!
+        *  Aktualna implementacja zakłada, że trawa nie może pojawić się tam, gdzie jest zwierzak. Czy tak ma być?
+         */
         Random roll = new Random();
-        while (map.size() <amount){
+        while (grassMap.size() < grassAmount){
             Vector2d position = new Vector2d(roll.nextInt(width), roll.nextInt(height));
             if (!isOccupied(position)){
-                map.put(position , new Grass(position));
+                grassMap.put(position , new Grass(position));
             }
         }
 
     }
-
-    //To samo - Wariant musi być dodany
 
     public void GenerateNewGrass(){
         Random roll = new Random();
@@ -50,18 +53,23 @@ public class Field implements IWorldMap {
         while (i < growth){
             Vector2d position = new Vector2d(roll.nextInt(width), roll.nextInt(height));
             if (!isOccupied(position)){
-                map.put(position , new Grass(position));
+                grassMap.put(position , new Grass(position));
                 i++;
         }
         }
     }
 
     public void removeAnimal(Animal animal){
-        map.remove(animal.getCurrentPos());
+        Vector2d position = animal.getCurrentPos();
+        animalMap.get(position).remove(animal);
     }
 
-    public Map<Vector2d, Object> getMap() {
-        return map;
+    public Map<Vector2d, Object> getGrassMap() {
+        return grassMap;
+    }
+
+    public Map<Vector2d, TreeSet<Animal>> getAnimalMap() {
+        return animalMap;
     }
 
     public int getWidth() {
@@ -82,44 +90,75 @@ public class Field implements IWorldMap {
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-//        if (map.containsKey(position)) {
-//            if (map.get(position) instanceof Grass) {
-//                generateNewGrass((Grass) map.get(position));
-//                return true;
-//            }
-//            //po
-//            return false;
-//        }
-        return true;
+        return position.getX() < this.width && position.getY() < this.height;
     }
 
     @Override
-    public void Randomplace(Animal animal) {
+    public void randomPlace(Animal animal) {
         Random roll = new Random();
         Vector2d position = new Vector2d(roll.nextInt(width) , roll.nextInt(height));
         animal.setCurrentPos(position);
-        map.put(position , animal);
+        /*
+        * Jeśli nie ma zwierzaka na danej pozycji, to tworzę TreeSeta dla klucza o tej pozycji
+        * Niezależnie od tego if'a, potem dodaje na TreeSecie z klucza position animala/
+        */
+        if (!isOccupiedByAnimal(position)){
+            Comparator<Animal> cmp = new AnimalComparator();
+            animalMap.put(position, new TreeSet<Animal>(cmp));
+        }
+        animalMap.get(position).add(animal);
     }
 
-    public void ParentPlace(Animal child ,Animal parent){
-        child.setCurrentPos(parent.getCurrentPos());
-        map.put(child.getCurrentPos() , child);
+    public void parentPlace(Animal child ,Animal parent){
+        Vector2d childSpawnPostion = parent.getCurrentPos();
+        /*
+         * Skoro dzieciak rodzi się na miejscu parent'a, to na pewno musi być już ten klucz w animalMap,
+         * więc nie trzeba sprawdzać tego, co przy Place'owaniu na starcie
+         */
+        animalMap.get(childSpawnPostion).add(child);
     }
 
-    public boolean isOccupied(Vector2d position) {
-        return map.containsKey(position);
+    public boolean isOccupiedByAnimal(Vector2d position) {
+        return animalMap.containsKey(position);
+    }
+    public boolean isOccupiedByGrass(Vector2d position) {
+        return grassMap.containsKey(position);
+    }
+
+
+    @Override
+    public boolean isOccupied(Vector2d position){
+        /*
+         * Pierwszeństwo ma zwierzak - prawdopodobnie nieistotne (?)
+         */
+        if (isOccupiedByAnimal(position)) {
+            return isOccupiedByAnimal(position);
+        }
+        else if (isOccupiedByGrass(position)) {
+            return isOccupiedByGrass(position);
+        }
+        return false;
     }
 
     @Override
     public Object objectAt(Vector2d position) {
-        if (isOccupied(position)){
-            return map.get(position);
+        if (isOccupiedByAnimal(position)){
+
+            /*
+             * na 95% jest ok, ale jak coś nie zadziała to sprawdzić,
+             * czy na pewno największy element, jeśli nie, użyć .last()
+             */
+            return animalMap.get(position).first();
+
+        }
+        if (isOccupiedByGrass(position)){
+            return grassMap.get(position);
         }
         return null;
     }
 
     public int eatGrass(Vector2d position){
-        map.remove(position);
+        grassMap.remove(position);
         return energyboost;
     }
 
