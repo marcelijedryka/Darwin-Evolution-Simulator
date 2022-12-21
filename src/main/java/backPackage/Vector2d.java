@@ -1,5 +1,6 @@
 package backPackage;
 
+import java.util.Objects;
 import java.util.Random;
 
 public class Vector2d {
@@ -21,11 +22,7 @@ public class Vector2d {
         return y;
     }
 
-    public String toString() {
-        String a = String.format("%d", this.x);
-        String b = String.format("%d", this.y);
-        return "(" + a + "," + b + ")";
-    }
+    public String toString() { return String.format("(%d,%d)", this.x, this.y); }
 
     public boolean precedes(Vector2d other) {
         return this.x <= other.x && this.y <= other.y;
@@ -71,5 +68,8 @@ public class Vector2d {
         return new Vector2d(a, b);
     }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.x,this.y);
+    }
 }

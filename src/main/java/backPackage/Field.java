@@ -58,12 +58,16 @@ public class Field implements IWorldMap {
     }
 
     @Override
-    public boolean place(Animal animal) {
-//        if (canMoveTo(animal.getCurrent_position())){
-//            map.put(animal.getCurrent_position() , animal);
-//            return true;
-//        }
-        return false;
+    public void Randomplace(Animal animal) {
+        Random roll = new Random();
+        Vector2d position = new Vector2d(roll.nextInt(width) , roll.nextInt(height));
+        animal.setCurrentPos(position);
+        map.put(position , animal);
+    }
+
+    public void ParentPlace(Animal child ,Animal parent){
+        child.setCurrentPos(parent.getCurrentPos());
+        map.put(child.getCurrentPos() , child);
     }
 
     public boolean isOccupied(Vector2d position) {
