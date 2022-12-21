@@ -52,4 +52,7 @@ public interface IWorldMap {
 
     Vector2d getUpRight();
 
+    int eatGrass(Vector2d position);
+
+    void removeAnimal(Animal animal);
 }

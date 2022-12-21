@@ -6,12 +6,14 @@ public class Animal {
 
     private Vector2d currentPos;
 
-    ArrayList<Integer> genes;
+    private ArrayList<Integer> genes;
     private MapDirection currentOrient;
 
     private int geneid;
 
-    private int energy;
+    private boolean dead = false;
+
+    private float energy;
     private final IWorldMap map;
 
     public Animal(IWorldMap map ,int energy ){
@@ -19,7 +21,12 @@ public class Animal {
         this.energy = energy;
         this.map = map;
         this.geneid = 0;
+        this.setRandomGenotype();
 
+    }
+
+    public ArrayList<Integer> getGenes() {
+        return genes;
     }
 
     public void setRandomGenotype(){
@@ -38,7 +45,7 @@ public class Animal {
         return currentPos;
     }
 
-    public int getEnergy() {
+    public float getEnergy() {
         return energy;
     }
 
@@ -56,12 +63,20 @@ public class Animal {
 
     }
 
-    public void energyLoss(){
-        energy = energy - 1;
+    public void energyLoss(float loss){
+        energy = energy - loss;
+        if (energy <= 0){
+            this.dead = true;
+        }
     }
 
 
     public void move(){
+
+        if (this.dead){
+            map.removeAnimal(this);
+        }
+
 
         int rotate = (currentOrient.ordinal() + genes.get(geneid)) % 8 ;
         currentOrient = MapDirection.values()[rotate];
@@ -82,7 +97,11 @@ public class Animal {
             case WEST -> position.add(new Vector2d(-1,0));
             case NORTHWEST -> position.add(new Vector2d(-1,1));
         }
+        if (map.objectAt(position) instanceof Grass){
+            this.energy = this.energy + map.eatGrass(position);
+        }
 
+//        this.energyLoss(loss);
         currentPos = position;
 
     }

@@ -6,7 +6,7 @@ public class World {
     public static int height =5;
 
     public static void main(String[] args){
-        IWorldMap field = new Field(height,wide);
+        IWorldMap field = new Field(height,wide , 10 , 1 , 5);
         MapVisualizer zmienna = new MapVisualizer(field);
         out.println(field);
     }
