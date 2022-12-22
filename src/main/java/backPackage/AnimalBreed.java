@@ -2,6 +2,7 @@ package backPackage;
 
 public class AnimalBreed {
 
+
     private final IWorldMap map;
 
     AnimalBreed(IWorldMap map){
@@ -13,7 +14,7 @@ public class AnimalBreed {
          */
         a1.energyLoss();
         a2.energyLoss();
-        Animal child = new Animal(map , energy);
+        Animal child = new Animal(map , energy , a1.getGenes().size() , a1.getLoss());
         child.setAncestorGenotype(a1,a2);
         return child;
     }

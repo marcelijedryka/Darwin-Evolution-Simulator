@@ -2,41 +2,44 @@ package backPackage;
 
 import java.util.ArrayList;
 
-//public class SimulationEngine implements IEngine {
-//
-//    private final MapDirection[] moves;
-//    private final IWorldMap map;
-//    private final ArrayList<Animal> animals;
-//
-//    public SimulationEngine(MapDirection[] moves , IWorldMap map , Vector2d[] starting_positions) {
-//        this.map=map;
-//        this.moves=moves;
-//        animals = new ArrayList<Animal>();
-//        for(Vector2d pos : starting_positions){
-//            Animal possible_animal = new Animal(map,pos);
-//            if (map.place(possible_animal)){
-//                animals.add(possible_animal);
-//
-//            }
-//        }
-//
-//    }
-//
-//    public ArrayList<Animal> getAnimals() {
-//        return animals;
-//    }
-//
-//    @Override
-//    public void run() {
-//        int j= 0;
-//        for(int i=0 ; i < moves.length ; i++){
-//            if(j == animals.size()){
-//                j=0;
-//            }
-//            animals.get(j).move(moves[i]);
-//            System.out.println(map);
-//            j++;
-//        }
-//    }
-//}
+public class SimulationEngine implements IEngine {
+
+    private final int evolutionTime;
+    private final float energyLoss;
+    private final IWorldMap map;
+    private final ArrayList<Animal> animals;
+
+    // Przekazujemy mapę, długość symualcji, początkową ilość zwierząt i ile energii tracą każdego dnia
+    public SimulationEngine(IWorldMap map , int evolutionTime , int animalAmount , int startEnergy ,float energyLoss , int genotypeLength ) {
+        this.map=map;
+        this.energyLoss = energyLoss;
+        this.evolutionTime =evolutionTime;
+        animals = new ArrayList<Animal>();
+        for(int i = 0 ; i < animalAmount ; i++){
+            Animal possible_animal = new Animal(map,startEnergy , genotypeLength , energyLoss);
+            map.randomPlace(possible_animal);
+            animals.add(possible_animal);
+        }
+
+    }
+
+    public ArrayList<Animal> getAnimals() {
+        return animals;
+    }
+
+    @Override
+    public void run() {
+
+        for(int i=0 ; i < evolutionTime ; i++){
+
+            for (Animal currentAnimal : animals) {
+                currentAnimal.move();
+                currentAnimal.energyLoss();
+            }
+
+            System.out.println(map);
+
+        }
+    }
+}
 
