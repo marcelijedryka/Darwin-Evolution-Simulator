@@ -58,6 +58,9 @@ public class Field implements IWorldMap, IPositionChangeObserver {
     public void removeAnimal(Animal animal){
         Vector2d position = animal.getCurrentPos();
         animalMap.get(position).remove(animal);
+        if (animalMap.get(position).size() == 0){
+            animalMap.remove(position);
+        }
     }
 
     public Map<Vector2d, Object> getGrassMap() {
@@ -170,7 +173,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
 
     @Override
     public void positionChanged(Animal ani, Vector2d oldPosition, Vector2d newPosition){
-        animalMap.get(oldPosition).remove(ani);
+        removeAnimal(ani);
 
         if (!isOccupiedByAnimal(newPosition)){
             Comparator<Animal> cmp = new AnimalComparator();
