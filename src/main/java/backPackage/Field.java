@@ -2,7 +2,7 @@ package backPackage;
 
 import java.util.*;
 
-public class Field implements IWorldMap {
+public class Field implements IWorldMap, IPositionChangeObserver {
 
     /*
     *  Trzeba było zrobić dwie osobne hashlisty dla animali i trawy — PAIN
@@ -166,6 +166,17 @@ public class Field implements IWorldMap {
     public Vector2d rollPosition(){
         Random roll = new Random();
         return new Vector2d(roll.nextInt(height-1) , roll.nextInt(width -1));
+    }
+
+    @Override
+    public void positionChanged(Animal ani, Vector2d oldPosition, Vector2d newPosition){
+        animalMap.get(oldPosition).remove(ani);
+
+        if (!isOccupiedByAnimal(newPosition)){
+            Comparator<Animal> cmp = new AnimalComparator();
+            animalMap.put(newPosition, new TreeSet<Animal>(cmp));
+        }
+        animalMap.get(newPosition).add(ani);
     }
 
 }

@@ -1,5 +1,8 @@
 package backPackage;
 
+import java.util.Comparator;
+import java.util.TreeSet;
+
 /**
  * The interface responsible for interacting with the map of the world.
  * Assumes that Vector2d and MoveDirection classes are defined.
@@ -55,4 +58,5 @@ public interface IWorldMap {
     int eatGrass(Vector2d position);
 
     void removeAnimal(Animal animal);
+
 }

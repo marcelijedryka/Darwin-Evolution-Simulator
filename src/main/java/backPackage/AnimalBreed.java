@@ -8,8 +8,11 @@ public class AnimalBreed {
         this.map = map;
     }
     public Animal breed(Animal a1, Animal a2 , int energy){
-        a1.energyLoss((float) (0.5 * energy));
-        a2.energyLoss((float) (0.5 * energy));
+        /*
+        Chyba aphollo chodziło że jest zadana strata energii, zmieniłem w Animal'u
+         */
+        a1.energyLoss();
+        a2.energyLoss();
         Animal child = new Animal(map , energy);
         child.setAncestorGenotype(a1,a2);
         return child;
