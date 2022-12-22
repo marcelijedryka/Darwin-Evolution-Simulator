@@ -55,14 +55,6 @@ public class Field implements IWorldMap, IPositionChangeObserver {
         }
     }
 
-    public void removeAnimal(Animal animal){
-        Vector2d position = animal.getCurrentPos();
-        animalMap.get(position).remove(animal);
-        if (animalMap.get(position).size() == 0){
-            animalMap.remove(position);
-        }
-    }
-
     public Map<Vector2d, Object> getGrassMap() {
         return grassMap;
     }
@@ -91,6 +83,21 @@ public class Field implements IWorldMap, IPositionChangeObserver {
     public boolean canMoveTo(Vector2d position) {
         return position.getX() < this.width && position.getY() < this.height;
     }
+    public void removeAnimal(Animal animal){
+        Vector2d position = animal.getCurrentPos();
+        animalMap.get(position).remove(animal);
+        if (animalMap.get(position).size() == 0){
+            animalMap.remove(position);
+        }
+    }
+
+    public void insertAnimal(Animal animal, Vector2d position){
+        if (!isOccupiedByAnimal(position)){
+            Comparator<Animal> cmp = new AnimalComparator();
+            animalMap.put(position, new TreeSet<Animal>(cmp));
+        }
+        animalMap.get(position).add(animal);
+    }
 
     @Override
     public void randomPlace(Animal animal) {
@@ -101,11 +108,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
         * Jeśli nie ma zwierzaka na danej pozycji, to tworzę TreeSeta dla klucza o tej pozycji
         * Niezależnie od tego if'a, potem dodaje na TreeSecie z klucza position animala/
         */
-        if (!isOccupiedByAnimal(position)){
-            Comparator<Animal> cmp = new AnimalComparator();
-            animalMap.put(position, new TreeSet<Animal>(cmp));
-        }
-        animalMap.get(position).add(animal);
+       insertAnimal(animal, position);
     }
 
     public void parentPlace(Animal child ,Animal parent){
@@ -174,12 +177,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
     @Override
     public void positionChanged(Animal ani, Vector2d oldPosition, Vector2d newPosition){
         removeAnimal(ani);
-
-        if (!isOccupiedByAnimal(newPosition)){
-            Comparator<Animal> cmp = new AnimalComparator();
-            animalMap.put(newPosition, new TreeSet<Animal>(cmp));
-        }
-        animalMap.get(newPosition).add(ani);
+        insertAnimal(ani, newPosition);
     }
 
 }
