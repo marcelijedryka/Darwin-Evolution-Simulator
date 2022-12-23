@@ -120,9 +120,11 @@ public class Animal {
     public void move() {
 
         if (this.dead) {
+//            Look for a problem
             map.removeAnimal(this);
+            System.out.println("zmarł");
+            System.exit(0);
         }
-
 
         int rotate = (currentOrient.ordinal() + genes.get(geneid)) % 8;
         currentOrient = MapDirection.values()[rotate];
