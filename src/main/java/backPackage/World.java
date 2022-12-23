@@ -2,12 +2,24 @@ package backPackage;
 import static java.lang.System.out;
 public class World {
 
-    public static int wide = 10;
-    public static int height =10;
+    public static int wide = 4;
+    public static int height =4;
 
     public static void main(String[] args){
-        IWorldMap field = new Field(height, wide , 10 , 1 , 5);
-        IEngine engine = new SimulationEngine(field,10,2,9,1,4);
+        /*
+        Mutacja:
+            0 - pełna losowość
+            1 - lekka korekta
+        Zachowanie:
+            0 - pełna predestynacja
+            1 - nieco szaleństwa
+
+        Krańce mapy i wzrost roślinności do przedyskutowania jak rozwiązać
+        */
+
+        Field field = new Field(height, wide , 4 , 1 , 5,0 , 0 , 5,
+                1);
+        IEngine engine = new SimulationEngine(field,100,2,9,1,4 );
         engine.run();
     }
 

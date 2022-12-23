@@ -16,8 +16,14 @@ public class Field extends AbstractWorldMap {
 
     private final int height;
     private final int width;
+    private final int minMutation;
+    private final int maxMutation;
+    private final int GenotypeVariant;
+    private final int AnimalMoveVariant;
 
-    public Field(int height , int width , int grassAmount , int growth , int energyBoost){
+    public Field(int height , int width , int grassAmount , int growth , int energyBoost,
+                 int GenotypeVariant , int minMutation , int maxMutation , int AnimalMoveVariant){
+        this.GenotypeVariant = GenotypeVariant;
         this.width = width;
         this.height = height;
         this.lowLeft = new Vector2d(0,0);
@@ -26,7 +32,9 @@ public class Field extends AbstractWorldMap {
         this.energyboost = energyBoost;
         super.animalMap = new HashMap<>();
         super.grassMap = new HashMap<>();
-
+        this.minMutation = minMutation;
+        this.maxMutation = maxMutation;
+        this.AnimalMoveVariant = AnimalMoveVariant;
         // Generowanie Trawy
 
         Random roll = new Random();
@@ -49,6 +57,18 @@ public class Field extends AbstractWorldMap {
                 i++;
         }
         }
+    }
+
+    public int getAnimalMoveVariant() {
+        return AnimalMoveVariant;
+    }
+
+    public int getMinMutation() {
+        return minMutation;
+    }
+
+    public int getMaxMutation() {
+        return maxMutation;
     }
 
     public Map<Vector2d, Object> getGrassMap() {
@@ -150,4 +170,7 @@ public class Field extends AbstractWorldMap {
         return new Vector2d(roll.nextInt(height-1) , roll.nextInt(width -1));
     }
 
+    public int getGenotypeVariant() {
+        return GenotypeVariant;
+    }
 }

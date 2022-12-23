@@ -1,12 +1,12 @@
 package backPackage;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Animal {
 
 
     private Vector2d currentPos;
-
     private ArrayList<Integer> genes;
     private MapDirection currentOrient;
 
@@ -15,14 +15,13 @@ public class Animal {
     private boolean dead = false;
 
     private float energy;
-    private final IWorldMap map;
-    private final AbstractWorldMap worldMap;
+    private final Field map;
 
     private final float loss;
 
     private ArrayList<IPositionChangeObserver> observerList;
 
-    public Animal(IWorldMap map, int energy , int genotypeLength , float energyLoss ){
+    public Animal(Field map, int energy , int genotypeLength , float energyLoss ){
         this.currentOrient = MapDirection.NORTH;
         this.energy = energy;
         this.map = map;
@@ -30,9 +29,8 @@ public class Animal {
         this.loss = energyLoss;
         this.setRandomGenotype(genotypeLength);
 
-        this.worldMap = (AbstractWorldMap) map;
         this.observerList = new ArrayList<>();
-        addObserver(worldMap);
+        addObserver((AbstractWorldMap) map);
     }
 
     void addObserver(IPositionChangeObserver observer){
@@ -59,7 +57,7 @@ public class Animal {
         return dead;
     }
 
-    public IWorldMap getMap() {
+    public Field getMap() {
         return map;
     }
 
@@ -80,7 +78,7 @@ public class Animal {
     }
 
     public void setAncestorGenotype(Animal a1 , Animal a2){
-        this.genes = new Genotype().offspingGenotype(a1 , a2);
+        this.genes = new Genotype().offspingGenotype(a1 , a2 ,map.getGenotypeVariant());
     }
 
     public void setCurrentPos(Vector2d position) {
@@ -126,11 +124,19 @@ public class Animal {
             System.exit(0);
         }
 
-        int rotate = (currentOrient.ordinal() + genes.get(geneid)) % 8;
-        currentOrient = MapDirection.values()[rotate];
-        geneid++;
-        if (geneid >= genes.size()) {
-            geneid = 0;
+        //Ogranie wariantów ruchów zwierzęcia
+
+        if (map.getAnimalMoveVariant() == 1){
+            Random roll = new Random();
+            int x = roll.nextInt(11);
+            if ( x <= 8){
+                this.standardMoveRotate();
+            }else{
+                geneid = roll.nextInt(genes.size());
+                this.standardMoveRotate();
+            }
+        }else {
+           this.standardMoveRotate();
         }
 
         Vector2d position = new Vector2d(currentPos.getX(), currentPos.getY());
@@ -159,5 +165,14 @@ public class Animal {
             map.randomPlace(this);
         }
 
+    }
+
+    public void standardMoveRotate(){
+        int rotate = (currentOrient.ordinal() + genes.get(geneid)) % 8;
+        currentOrient = MapDirection.values()[rotate];
+        geneid++;
+        if (geneid >= genes.size()) {
+            geneid = 0;
+        }
     }
 }
