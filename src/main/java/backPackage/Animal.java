@@ -16,7 +16,6 @@ public class Animal {
 
     private float energy;
     private final Field map;
-    private final AbstractWorldMap worldMap;
 
     private final float loss;
 
@@ -30,9 +29,8 @@ public class Animal {
         this.loss = energyLoss;
         this.setRandomGenotype(genotypeLength);
 
-        this.worldMap = (AbstractWorldMap) map;
         this.observerList = new ArrayList<>();
-        addObserver(worldMap);
+        addObserver((AbstractWorldMap) map);
     }
 
     void addObserver(IPositionChangeObserver observer){
