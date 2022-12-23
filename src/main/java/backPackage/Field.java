@@ -52,7 +52,7 @@ public class Field extends AbstractWorldMap {
         int i = 0;
         while (i < growth){
             Vector2d position = new Vector2d(roll.nextInt(width), roll.nextInt(height));
-            if (!isOccupied(position)){
+            if (!isOccupiedByGrass(position)){
                 grassMap.put(position , new Grass(position));
                 i++;
         }
@@ -97,14 +97,14 @@ public class Field extends AbstractWorldMap {
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        return position.getX() < this.width && position.getY() < this.height;
+        return position.getX() > 0 && position.getX() < this.width - 1 && position.getY() > 0 &&  position.getY() < this.height - 1 ;
     }
 
 
     @Override
     public void randomPlace(Animal animal) {
         Random roll = new Random();
-        Vector2d position = new Vector2d(roll.nextInt(width) , roll.nextInt(height));
+        Vector2d position = new Vector2d(roll.nextInt(width ) , roll.nextInt(height ));
         animal.setCurrentPos(position);
         /*
         * Jeśli nie ma zwierzaka na danej pozycji, to tworzę TreeSeta dla klucza o tej pozycji

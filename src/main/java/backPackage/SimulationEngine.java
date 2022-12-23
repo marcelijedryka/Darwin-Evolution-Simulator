@@ -36,9 +36,11 @@ public class SimulationEngine implements IEngine {
             for (Animal currentAnimal : animals) {
                 currentAnimal.move();
                 currentAnimal.energyLoss();
+                System.out.println(currentAnimal.getCurrentPos());
             }
 
             System.out.println(map);
+            System.out.println("Number of animals: " + animals.size());
 
         }
     }

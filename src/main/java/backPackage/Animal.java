@@ -162,6 +162,7 @@ public class Animal {
             currentPos = position;
         } else {
             energyLoss();
+            map.removeAnimal(this);
             map.randomPlace(this);
         }
 
