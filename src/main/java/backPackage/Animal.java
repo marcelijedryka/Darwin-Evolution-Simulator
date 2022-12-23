@@ -134,14 +134,14 @@ public class Animal {
         Vector2d position = new Vector2d(currentPos.getX(), currentPos.getY());
 
         switch (currentOrient) {
-            case NORTH -> position.add(new Vector2d(0, 1));
-            case NORTHEAST -> position.add(new Vector2d(1, 1));
-            case EAST -> position.add(new Vector2d(1, 0));
-            case SOUTHEAST -> position.add(new Vector2d(1, -1));
-            case SOUTH -> position.add(new Vector2d(0, -1));
-            case SOUTHWEST -> position.add(new Vector2d(-1, -1));
-            case WEST -> position.add(new Vector2d(-1, 0));
-            case NORTHWEST -> position.add(new Vector2d(-1, 1));
+            case NORTH -> position = position.add(new Vector2d(0, 1));
+            case NORTHEAST -> position = position.add(new Vector2d(1, 1));
+            case EAST -> position =position.add(new Vector2d(1, 0));
+            case SOUTHEAST -> position =position.add(new Vector2d(1, -1));
+            case SOUTH -> position =position.add(new Vector2d(0, -1));
+            case SOUTHWEST -> position =position.add(new Vector2d(-1, -1));
+            case WEST -> position =position.add(new Vector2d(-1, 0));
+            case NORTHWEST -> position =position.add(new Vector2d(-1, 1));
         }
         if (map.objectAt(position) instanceof Grass) {
             this.energy = this.energy + map.eatGrass(position);
