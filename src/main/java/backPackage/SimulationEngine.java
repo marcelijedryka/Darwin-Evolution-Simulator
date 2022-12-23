@@ -10,7 +10,7 @@ public class SimulationEngine implements IEngine {
     private final ArrayList<Animal> animals;
 
     // Przekazujemy mapę, długość symualcji, początkową ilość zwierząt i ile energii tracą każdego dnia
-    public SimulationEngine(IWorldMap map , int evolutionTime , int animalAmount , int startEnergy ,float energyLoss , int genotypeLength ) {
+    public SimulationEngine(IWorldMap map , int evolutionTime , int animalAmount , int startEnergy , float energyLoss , int genotypeLength ) {
         this.map=map;
         this.energyLoss = energyLoss;
         this.evolutionTime =evolutionTime;

@@ -2,14 +2,8 @@ package backPackage;
 
 import java.util.*;
 
-public class Field implements IWorldMap, IPositionChangeObserver {
+public class Field extends AbstractWorldMap {
 
-    /*
-    *  Trzeba było zrobić dwie osobne hashlisty dla animali i trawy — PAIN
-    *  */
-
-    private final Map<Vector2d , TreeSet<Animal>> animalMap = new HashMap<>();
-    private final Map<Vector2d , Object> grassMap = new HashMap<>();
 
     private final Vector2d lowLeft;
 
@@ -30,9 +24,11 @@ public class Field implements IWorldMap, IPositionChangeObserver {
         this.upRight = new Vector2d(height-1,width-1);
         this.growth = growth;
         this.energyboost = energyBoost;
+        super.animalMap = new HashMap<>();
+        super.grassMap = new HashMap<>();
 
         // Generowanie Trawy
-        
+
         Random roll = new Random();
         while (grassMap.size() < grassAmount){
             Vector2d position = new Vector2d(roll.nextInt(width), roll.nextInt(height));
@@ -59,7 +55,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
         return grassMap;
     }
 
-    public Map<Vector2d, TreeSet<Animal>> getAnimalMap() {
+    public Map<Vector2d, PriorityQueue<Animal>> getAnimalMap() {
         return animalMap;
     }
 
@@ -83,21 +79,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
     public boolean canMoveTo(Vector2d position) {
         return position.getX() < this.width && position.getY() < this.height;
     }
-    public void removeAnimal(Animal animal){
-        Vector2d position = animal.getCurrentPos();
-        animalMap.get(position).remove(animal);
-        if (animalMap.get(position).size() == 0){
-            animalMap.remove(position);
-        }
-    }
 
-    public void insertAnimal(Animal animal, Vector2d position){
-        if (!isOccupiedByAnimal(position)){
-            Comparator<Animal> cmp = new AnimalComparator();
-            animalMap.put(position, new TreeSet<Animal>(cmp));
-        }
-        animalMap.get(position).add(animal);
-    }
 
     @Override
     public void randomPlace(Animal animal) {
@@ -112,19 +94,12 @@ public class Field implements IWorldMap, IPositionChangeObserver {
     }
 
     public void parentPlace(Animal child ,Animal parent){
-        Vector2d childSpawnPostion = parent.getCurrentPos();
+        Vector2d childSpawnPosition = parent.getCurrentPos();
         /*
          * Skoro dzieciak rodzi się na miejscu parent'a, to na pewno musi być już ten klucz w animalMap,
          * więc nie trzeba sprawdzać tego, co przy Place'owaniu na starcie
          */
-        animalMap.get(childSpawnPostion).add(child);
-    }
-
-    public boolean isOccupiedByAnimal(Vector2d position) {
-        return animalMap.containsKey(position);
-    }
-    public boolean isOccupiedByGrass(Vector2d position) {
-        return grassMap.containsKey(position);
+        animalMap.get(childSpawnPosition).add(child);
     }
 
 
@@ -150,7 +125,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
              * na 95% jest ok, ale jak coś nie zadziała to sprawdzić,
              * czy na pewno największy element, jeśli nie, użyć .last()
              */
-            return animalMap.get(position).first();
+            return animalMap.get(position).peek();
 
         }
         if (isOccupiedByGrass(position)){
@@ -164,6 +139,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
         return energyboost;
     }
 
+    @Override
     public String toString() {
         MapVisualizer draw = new MapVisualizer(this);
         return draw.draw(lowLeft,upRight);
@@ -172,12 +148,6 @@ public class Field implements IWorldMap, IPositionChangeObserver {
     public Vector2d rollPosition(){
         Random roll = new Random();
         return new Vector2d(roll.nextInt(height-1) , roll.nextInt(width -1));
-    }
-
-    @Override
-    public void positionChanged(Animal ani, Vector2d oldPosition, Vector2d newPosition){
-        removeAnimal(ani);
-        insertAnimal(ani, newPosition);
     }
 
 }

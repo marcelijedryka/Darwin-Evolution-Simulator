@@ -16,13 +16,9 @@ public class Animal {
 
     private float energy;
     private final IWorldMap map;
+    private final AbstractWorldMap worldMap;
 
     private final float loss;
-
-
-    /*
-    !!! DO PRZEMYŚLENIA co z length i loss!!!
-     */
 
     private ArrayList<IPositionChangeObserver> observerList;
 
@@ -31,13 +27,12 @@ public class Animal {
         this.energy = energy;
         this.map = map;
         this.geneid = 0;
-
         this.loss = energyLoss;
         this.setRandomGenotype(genotypeLength);
-        /*
-        Dzięki AbstractWorldElement nie będzie trzeba rzutować
-         */
-        addObserver( (IPositionChangeObserver) this.map);
+
+        this.worldMap = (AbstractWorldMap) map;
+        this.observerList = new ArrayList<>();
+        addObserver(worldMap);
     }
 
     void addObserver(IPositionChangeObserver observer){
@@ -155,7 +150,6 @@ public class Animal {
 
 
         if (map.canMoveTo(position)) {
-
             positionChanged(currentPos, position);
             currentPos = position;
         } else {
