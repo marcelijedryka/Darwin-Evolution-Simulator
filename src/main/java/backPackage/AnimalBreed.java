@@ -1,9 +1,9 @@
 package backPackage;
 
 public class AnimalBreed {
-    private final AbstractWorldMap map;
+    private final Field map;
 
-    AnimalBreed(AbstractWorldMap map){
+    AnimalBreed(Field map){
         this.map = map;
     }
     public Animal breed(Animal a1, Animal a2 , int energy){
