@@ -59,4 +59,6 @@ public interface IWorldMap {
 
     void removeAnimal(Animal animal);
 
+    void insertAnimal(Animal animal, Vector2d position);
+
 }

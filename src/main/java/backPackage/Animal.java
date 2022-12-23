@@ -16,13 +16,9 @@ public class Animal {
 
     private float energy;
     private final IWorldMap map;
+    private final AbstractWorldMap worldMap;
 
     private final float loss;
-
-
-    /*
-    !!! DO PRZEMYŚLENIA co z length i loss!!!
-     */
 
     private ArrayList<IPositionChangeObserver> observerList;
 
@@ -31,13 +27,12 @@ public class Animal {
         this.energy = energy;
         this.map = map;
         this.geneid = 0;
-
         this.loss = energyLoss;
         this.setRandomGenotype(genotypeLength);
-        /*
-        Dzięki AbstractWorldElement nie będzie trzeba rzutować
-         */
-        addObserver( (IPositionChangeObserver) this.map);
+
+        this.worldMap = (AbstractWorldMap) map;
+        this.observerList = new ArrayList<>();
+        addObserver(worldMap);
     }
 
     void addObserver(IPositionChangeObserver observer){
@@ -125,9 +120,11 @@ public class Animal {
     public void move() {
 
         if (this.dead) {
+//            Look for a problem
             map.removeAnimal(this);
+            System.out.println("zmarł");
+            System.exit(0);
         }
-
 
         int rotate = (currentOrient.ordinal() + genes.get(geneid)) % 8;
         currentOrient = MapDirection.values()[rotate];
@@ -139,14 +136,14 @@ public class Animal {
         Vector2d position = new Vector2d(currentPos.getX(), currentPos.getY());
 
         switch (currentOrient) {
-            case NORTH -> position.add(new Vector2d(0, 1));
-            case NORTHEAST -> position.add(new Vector2d(1, 1));
-            case EAST -> position.add(new Vector2d(1, 0));
-            case SOUTHEAST -> position.add(new Vector2d(1, -1));
-            case SOUTH -> position.add(new Vector2d(0, -1));
-            case SOUTHWEST -> position.add(new Vector2d(-1, -1));
-            case WEST -> position.add(new Vector2d(-1, 0));
-            case NORTHWEST -> position.add(new Vector2d(-1, 1));
+            case NORTH -> position = position.add(new Vector2d(0, 1));
+            case NORTHEAST -> position = position.add(new Vector2d(1, 1));
+            case EAST -> position =position.add(new Vector2d(1, 0));
+            case SOUTHEAST -> position =position.add(new Vector2d(1, -1));
+            case SOUTH -> position =position.add(new Vector2d(0, -1));
+            case SOUTHWEST -> position =position.add(new Vector2d(-1, -1));
+            case WEST -> position =position.add(new Vector2d(-1, 0));
+            case NORTHWEST -> position =position.add(new Vector2d(-1, 1));
         }
         if (map.objectAt(position) instanceof Grass) {
             this.energy = this.energy + map.eatGrass(position);
@@ -155,7 +152,6 @@ public class Animal {
 
 
         if (map.canMoveTo(position)) {
-
             positionChanged(currentPos, position);
             currentPos = position;
         } else {
