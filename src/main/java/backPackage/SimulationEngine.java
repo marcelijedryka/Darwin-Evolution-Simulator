@@ -12,17 +12,21 @@ public class SimulationEngine implements IEngine {
 
 
     // Przekazujemy mapę, długość symualcji, początkową ilość zwierząt i ile energii tracą każdego dnia
-    public SimulationEngine(Field map , int evolutionTime , int animalAmount , int startEnergy , float energyLoss , int genotypeLength) {
+    public SimulationEngine(Field map , int evolutionTime , int animalAmount , int startEnergy , int energyLoss , int genotypeLength) {
         this.map=map;
         this.energyLoss = energyLoss;
         this.evolutionTime =evolutionTime;
         animals = new ArrayList<Animal>();
         for(int i = 0 ; i < animalAmount ; i++){
-            Animal possible_animal = new Animal(map,startEnergy , genotypeLength , energyLoss);
+            Animal possible_animal = new Animal(map,startEnergy , genotypeLength , energyLoss , this);
             map.randomPlace(possible_animal);
             animals.add(possible_animal);
         }
 
+    }
+
+    public void addAnimaltoList(Animal animal){
+        animals.add(animal);
     }
 
     public ArrayList<Animal> getAnimals() {
@@ -50,14 +54,14 @@ public class SimulationEngine implements IEngine {
             while (iterator.hasNext()) {
                 Animal currentAnimal = iterator.next();
                 currentAnimal.move();
-                currentAnimal.energyLoss();
+                currentAnimal.energyLoss(currentAnimal.getLoss());
                 System.out.println(currentAnimal.getCurrentPos());
                 if (currentAnimal.isDead()) {
                     iterator.remove();
                     map.removeAnimal(currentAnimal);
                 }
             }
-
+            map.checkPossibleBreed();
             map.generateNewGrass();
             System.out.println(map);
             System.out.println("Number of animals: " + animals.size());
@@ -66,6 +70,10 @@ public class SimulationEngine implements IEngine {
         System.out.println("_________________________________________________________________");
         System.out.println("\n" + animals.size()+ " SURVIVED "+ evolutionTime+ " ITERATIONS\n");
         System.out.println("_________________________________________________________________");
+    }
+
+    public float getEnergyLoss() {
+        return energyLoss;
     }
 }
 

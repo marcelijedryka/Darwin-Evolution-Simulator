@@ -2,9 +2,6 @@ package backPackage;
 import static java.lang.System.out;
 public class World {
 
-    public static int wide = 20;
-    public static int height = 20;
-
     public static void main(String[] args){
         /*
         Mutacja:
@@ -17,9 +14,9 @@ public class World {
         Krańce mapy i wzrost roślinności do przedyskutowania jak rozwiązać
         */
 
-        Field field = new Field(height, wide , 5 , 2 , 15,1 , 0 , 5,
-                1);
-        IEngine engine = new SimulationEngine(field,100,15,10,1,4 );
+        Field field = new Field(4,4 , 4 , 2 , 15,1 , 0 , 5,
+                1 ,2 , 1);
+        IEngine engine = new SimulationEngine(field,100,4,10,1,10 );
         engine.run();
     }
 

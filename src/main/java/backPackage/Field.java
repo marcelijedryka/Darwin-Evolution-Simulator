@@ -20,9 +20,12 @@ public class Field extends AbstractWorldMap {
     private final int maxMutation;
     private final int GenotypeVariant;
     private final int AnimalMoveVariant;
+    private final int minBreedEnergy;
+    private final int breedEnergyLoss;
 
     public Field(int height , int width , int grassAmount , int newGrassAmount , int energyBoost,
-                 int GenotypeVariant , int minMutation , int maxMutation , int AnimalMoveVariant){
+                 int GenotypeVariant , int minMutation , int maxMutation , int AnimalMoveVariant,
+                 int minBreedEnergy , int breedEnergyLoss){
         this.GenotypeVariant = GenotypeVariant;
         this.width = width;
         this.height = height;
@@ -35,6 +38,8 @@ public class Field extends AbstractWorldMap {
         this.minMutation = minMutation;
         this.maxMutation = maxMutation;
         this.AnimalMoveVariant = AnimalMoveVariant;
+        this.minBreedEnergy = minBreedEnergy;
+        this.breedEnergyLoss = breedEnergyLoss;
         // Generowanie Trawy
 
         Random roll = new Random();
@@ -57,6 +62,22 @@ public class Field extends AbstractWorldMap {
                 i++;
         }
         }
+    }
+
+    public int getEnergyboost() {
+        return energyboost;
+    }
+
+    public int getNewGrassAmount() {
+        return newGrassAmount;
+    }
+
+    public int getMinBreedEnergy() {
+        return minBreedEnergy;
+    }
+
+    public int getBreedEnergyLoss() {
+        return breedEnergyLoss;
     }
 
     public int getAnimalMoveVariant() {
@@ -114,12 +135,11 @@ public class Field extends AbstractWorldMap {
     }
 
     public void parentPlace(Animal child ,Animal parent){
-        Vector2d childSpawnPosition = parent.getCurrentPos();
         /*
          * Skoro dzieciak rodzi się na miejscu parent'a, to na pewno musi być już ten klucz w animalMap,
          * więc nie trzeba sprawdzać tego, co przy Place'owaniu na starcie
          */
-        animalMap.get(childSpawnPosition).add(child);
+        animalMap.get(parent.getCurrentPos()).add(child);
     }
 
 
@@ -172,6 +192,24 @@ public class Field extends AbstractWorldMap {
 
     public int getGenotypeVariant() {
         return GenotypeVariant;
+    }
+
+    //będzie działać przy założeniu że usuwamy z mapy pola na których nie stoją zwierzęta
+    public void checkPossibleBreed(){
+        for (Map.Entry<Vector2d , PriorityQueue<Animal>> set : animalMap.entrySet()){
+            PriorityQueue<Animal> currentField = set.getValue();
+            if(currentField.size() >= 2){
+                Animal a1 = currentField.poll();
+                Animal a2 = currentField.poll();
+                if (a1.getEnergy() >= minBreedEnergy && a2.getEnergy() >= minBreedEnergy){
+                    Animal child = new AnimalBreed().breed(a1 ,a2 , a1.getStartingEnergy());
+                    // tu się wywala przy placowaniu coś źle !!
+                    parentPlace(child,a1);
+                }
+                currentField.add(a1);
+                currentField.add(a2);
+            }
+        }
     }
 
 }

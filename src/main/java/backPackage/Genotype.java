@@ -22,15 +22,16 @@ public class Genotype {
         int side = roll.nextInt(2);
 
         if (a1.getEnergy() > a2.getEnergy()){
-            int n = (int) (x * a1.getEnergy());
+            int n = (int) (x * a1.getGenes().size());
             //lewa strona
             if (side==0){
-                for (int i = 0 ; i < n ; i++){
+                for (int i = 0 ; i < n ; i++) {
                     genotype.add(a1.getGenes().get(i));
+                }
                 for (int j = n ; j < a1.getGenes().size() ; j++){
                     genotype.add(a2.getGenes().get(j));
                 }
-            }
+
             }
             else{
                 //prawa strona
@@ -44,7 +45,7 @@ public class Genotype {
             }
 
         }else{
-            int n = (int) (x * a2.getEnergy());
+            int n = (int) (x * a2.getGenes().size());
 
             //lewa strona
 
