@@ -1,12 +1,13 @@
 package backPackage;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class SimulationEngine implements IEngine {
 
     private final int evolutionTime;
     private final float energyLoss;
-    private final IWorldMap map;
+    private final Field map;
     private final ArrayList<Animal> animals;
 
 
@@ -33,16 +34,38 @@ public class SimulationEngine implements IEngine {
 
         for(int i=0 ; i < evolutionTime ; i++){
 
-            for (Animal currentAnimal : animals) {
+//            for (Animal currentAnimal : animals) {
+//                if (animals.size() > 0) {
+//                    currentAnimal.move();
+//                    currentAnimal.energyLoss();
+//                    System.out.println(currentAnimal.getCurrentPos());
+//                    if (currentAnimal.isDead()){ animals.remove(currentAnimal);}
+//                }
+//                else{
+//                    System.out.println("Nie ma już zwierzaków");
+//                    System.exit(0);
+//                }
+//            }
+            Iterator<Animal> iterator = animals.iterator();
+            while (iterator.hasNext()) {
+                Animal currentAnimal = iterator.next();
                 currentAnimal.move();
                 currentAnimal.energyLoss();
                 System.out.println(currentAnimal.getCurrentPos());
+                if (currentAnimal.isDead()) {
+                    iterator.remove();
+                    map.removeAnimal(currentAnimal);
+                }
             }
 
+            map.generateNewGrass();
             System.out.println(map);
             System.out.println("Number of animals: " + animals.size());
 
         }
+        System.out.println("_________________________________________________________________");
+        System.out.println("\n" + animals.size()+ " SURVIVED "+ evolutionTime+ " ITERATIONS\n");
+        System.out.println("_________________________________________________________________");
     }
 }
 

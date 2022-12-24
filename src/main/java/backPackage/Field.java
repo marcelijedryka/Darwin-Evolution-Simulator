@@ -12,7 +12,7 @@ public class Field extends AbstractWorldMap {
     private final int energyboost;
 
     // ilość nowej trawy w każdym ruchu
-    private final int growth;
+    private final int newGrassAmount;
 
     private final int height;
     private final int width;
@@ -21,14 +21,14 @@ public class Field extends AbstractWorldMap {
     private final int GenotypeVariant;
     private final int AnimalMoveVariant;
 
-    public Field(int height , int width , int grassAmount , int growth , int energyBoost,
+    public Field(int height , int width , int grassAmount , int newGrassAmount , int energyBoost,
                  int GenotypeVariant , int minMutation , int maxMutation , int AnimalMoveVariant){
         this.GenotypeVariant = GenotypeVariant;
         this.width = width;
         this.height = height;
         this.lowLeft = new Vector2d(0,0);
         this.upRight = new Vector2d(height-1,width-1);
-        this.growth = growth;
+        this.newGrassAmount = newGrassAmount;
         this.energyboost = energyBoost;
         super.animalMap = new HashMap<>();
         super.grassMap = new HashMap<>();
@@ -47,10 +47,10 @@ public class Field extends AbstractWorldMap {
 
     }
 
-    public void GenerateNewGrass(){
+    public void generateNewGrass(){
         Random roll = new Random();
         int i = 0;
-        while (i < growth){
+        while (i < newGrassAmount && i < width*height){
             Vector2d position = new Vector2d(roll.nextInt(width), roll.nextInt(height));
             if (!isOccupiedByGrass(position)){
                 grassMap.put(position , new Grass(position));
@@ -167,10 +167,11 @@ public class Field extends AbstractWorldMap {
 
     public Vector2d rollPosition(){
         Random roll = new Random();
-        return new Vector2d(roll.nextInt(height-1) , roll.nextInt(width -1));
+        return new Vector2d(roll.nextInt(height) , roll.nextInt(width));
     }
 
     public int getGenotypeVariant() {
         return GenotypeVariant;
     }
+
 }

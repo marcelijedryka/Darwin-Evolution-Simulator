@@ -117,12 +117,7 @@ public class Animal {
 
     public void move() {
 
-        if (this.dead) {
-//            Look for a problem
-            map.removeAnimal(this);
-            System.out.println("zmarł");
-            System.exit(0);
-        }
+
 
         //Ogranie wariantów ruchów zwierzęcia
 
@@ -155,8 +150,6 @@ public class Animal {
             this.energy = this.energy + map.eatGrass(position);
         }
 
-
-
         if (map.canMoveTo(position)) {
             positionChanged(currentPos, position);
             currentPos = position;
@@ -166,6 +159,9 @@ public class Animal {
             map.randomPlace(this);
         }
 
+//        if (this.dead) {
+//            map.removeAnimal(this);
+//        }
     }
 
     public void standardMoveRotate(){
