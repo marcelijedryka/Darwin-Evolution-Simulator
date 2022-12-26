@@ -42,7 +42,7 @@ public class SimulationEngine implements IEngine {
                 Animal currentAnimal = iterator.next();
                 currentAnimal.move();
                 currentAnimal.energyLoss(currentAnimal.getLoss());
-                System.out.println(currentAnimal.getCurrentPos());
+//                System.out.println(currentAnimal.getCurrentPos());
                 if (currentAnimal.isDead()) {
                     iterator.remove();
                     map.removeAnimal(currentAnimal);
@@ -50,7 +50,7 @@ public class SimulationEngine implements IEngine {
 
             }
             map.checkPossibleBreed();
-            map.generateNewGrass();
+            map.generateNewGrass(map.getNewGrassAmount());
             System.out.println("Number of animals: " + animals.size());
             System.out.println("Time: " + i);
             System.out.println(map);

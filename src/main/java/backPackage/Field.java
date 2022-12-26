@@ -22,10 +22,13 @@ public class Field extends AbstractWorldMap {
     private final int AnimalMoveVariant;
     private final int minBreedEnergy;
     private final int breedEnergyLoss;
+    private final int mapVariant;
+
+    private final int grassVariant;
 
     public Field(int height , int width , int grassAmount , int newGrassAmount , int energyBoost,
                  int GenotypeVariant , int minMutation , int maxMutation , int AnimalMoveVariant,
-                 int minBreedEnergy , int breedEnergyLoss){
+                 int minBreedEnergy , int breedEnergyLoss, int mapVariant, int grassVariant){
         this.GenotypeVariant = GenotypeVariant;
         this.width = width;
         this.height = height;
@@ -40,30 +43,73 @@ public class Field extends AbstractWorldMap {
         this.AnimalMoveVariant = AnimalMoveVariant;
         this.minBreedEnergy = minBreedEnergy;
         this.breedEnergyLoss = breedEnergyLoss;
-        // Generowanie Trawy
+        this.mapVariant = mapVariant;
+        this.grassVariant = grassVariant;
 
-        Random roll = new Random();
-        while (grassMap.size() < grassAmount){
-            Vector2d position = new Vector2d(roll.nextInt(width), roll.nextInt(height));
-            if (!isOccupiedByGrass(position)){
-                grassMap.put(position , new Grass(position));
-            }
-        }
-
+        generateNewGrass(grassAmount);
     }
 
-    public void generateNewGrass(){
-        Random roll = new Random();
-        int i = 0;
-//        grassMap.size() + newGrassAmount < width*height
-        while (i < newGrassAmount){
-            if (grassMap.size() == width*height) break;
-            Vector2d position = new Vector2d(roll.nextInt(width), roll.nextInt(height));
-            if (!isOccupiedByGrass(position)){
-                grassMap.put(position , new Grass(position));
-                i++;
+//    public void generateNewGrass(){
+//        Random roll = new Random();
+//        int i = 0;
+//
+//        int beltGrassAmount = (int) (0.8 * newGrassAmount);
+//        int notBeltGrassAmount = newGrassAmount - beltGrassAmount;
+//        int beltSize = (int) (0.2 * height);
+//
+//        while (i < newGrassAmount) {
+//            if (grassMap.size() == width * height) break;
+//            Vector2d position = new Vector2d(roll.nextInt(width), roll.nextInt(height));
+//            if (!isOccupiedByGrass(position)) {
+//                grassMap.put(position, new Grass(position));
+//                i++;
+//            }
+//        }
+//    }
+    public void generateNewGrass(int amount){
+        if (grassVariant == 0) {
+            Random roll = new Random();
+            int beltSize = (int) (0.1 * height);
 
+            int i = 0;
+            while (i < amount) {
+                if (grassMap.size() == width * height) break;
+                Vector2d position;
+                double rand = roll.nextDouble();
+                if (rand <= 0.8) {
+                    // Pas równikowy
+                    int up_down = roll.nextInt(2);
+                    int y;
+
+                    if (up_down == 1) {
+                        y = roll.nextInt(beltSize) + (width / 2 - beltSize);
+                    } else {
+                        y = roll.nextInt(beltSize) + (width / 2);
+                    }
+                    int x = roll.nextInt(height);
+                    position = new Vector2d(x, y);
+                } else {
+                    // Poza pasem równikowym
+                    int up_down = roll.nextInt(2);
+                    int y;
+
+                    if (up_down == 1) {
+                        y = roll.nextInt(width / 2 - beltSize);
+                    } else {
+                        y = roll.nextInt(width / 2 - beltSize) + (width / 2 + beltSize);
+                    }
+                    int x = roll.nextInt(height);
+                    position = new Vector2d(x, y);
+                }
+                if (!isOccupiedByGrass(position)) {
+                    grassMap.put(position, new Grass(position));
+                    i++;
+                }
+            }
         }
+        else{
+            System.out.println("\n\n\n\n\n\n\n!!! JESZCZE BRAK ROZWIĄZANIA !!!!\n\n\n\n\n\n\n");
+            System.exit(0);
         }
     }
 
@@ -121,14 +167,18 @@ public class Field extends AbstractWorldMap {
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        return position.getX() > 0 && position.getX() < this.width - 1 && position.getY() > 0 &&  position.getY() < this.height - 1 ;
+        return position.getX() >= 0 && position.getX() < this.width && position.getY() >= 0 &&  position.getY() < this.height ;
+    }
+
+    public boolean canMoveToOnEarth(Vector2d position) {
+        return position.getY() >= 0 && position.getY() < this.height ;
     }
 
 
     @Override
     public void randomPlace(Animal animal) {
         Random roll = new Random();
-        Vector2d position = new Vector2d(roll.nextInt(width ) , roll.nextInt(height ));
+        Vector2d position = new Vector2d(roll.nextInt(width - 1) , roll.nextInt(height - 1));
         animal.setCurrentPos(position);
         /*
         * Jeśli nie ma zwierzaka na danej pozycji, to tworzę TreeSeta dla klucza o tej pozycji
@@ -212,6 +262,14 @@ public class Field extends AbstractWorldMap {
                 currentField.add(a2);
             }
         }
+    }
+
+    public int getMapVariant() {
+        return mapVariant;
+    }
+
+    public int getGrassVariant(){
+        return grassVariant;
     }
 
 }
