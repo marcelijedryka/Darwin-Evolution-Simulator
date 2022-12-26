@@ -37,19 +37,6 @@ public class SimulationEngine implements IEngine {
     public void run() {
 
         for(int i=0 ; i < evolutionTime ; i++){
-
-//            for (Animal currentAnimal : animals) {
-//                if (animals.size() > 0) {
-//                    currentAnimal.move();
-//                    currentAnimal.energyLoss();
-//                    System.out.println(currentAnimal.getCurrentPos());
-//                    if (currentAnimal.isDead()){ animals.remove(currentAnimal);}
-//                }
-//                else{
-//                    System.out.println("Nie ma już zwierzaków");
-//                    System.exit(0);
-//                }
-//            }
             Iterator<Animal> iterator = animals.iterator();
             while (iterator.hasNext()) {
                 Animal currentAnimal = iterator.next();
@@ -60,11 +47,15 @@ public class SimulationEngine implements IEngine {
                     iterator.remove();
                     map.removeAnimal(currentAnimal);
                 }
+
             }
             map.checkPossibleBreed();
             map.generateNewGrass();
-            System.out.println(map);
             System.out.println("Number of animals: " + animals.size());
+            System.out.println("Time: " + i);
+            System.out.println(map);
+
+
 
         }
         System.out.println("_________________________________________________________________");

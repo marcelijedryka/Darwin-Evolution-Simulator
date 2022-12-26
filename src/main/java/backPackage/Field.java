@@ -55,11 +55,14 @@ public class Field extends AbstractWorldMap {
     public void generateNewGrass(){
         Random roll = new Random();
         int i = 0;
-        while (i < newGrassAmount && i < width*height){
+//        grassMap.size() + newGrassAmount < width*height
+        while (i < newGrassAmount){
+            if (grassMap.size() == width*height) break;
             Vector2d position = new Vector2d(roll.nextInt(width), roll.nextInt(height));
             if (!isOccupiedByGrass(position)){
                 grassMap.put(position , new Grass(position));
                 i++;
+
         }
         }
     }
@@ -201,9 +204,8 @@ public class Field extends AbstractWorldMap {
             if(currentField.size() >= 2){
                 Animal a1 = currentField.poll();
                 Animal a2 = currentField.poll();
-                if (a1.getEnergy() >= minBreedEnergy && a2.getEnergy() >= minBreedEnergy){
+                if (a1.getEnergy() > minBreedEnergy+breedEnergyLoss && a2.getEnergy() > minBreedEnergy+breedEnergyLoss){
                     Animal child = new AnimalBreed().breed(a1 ,a2 , a1.getStartingEnergy());
-                    // tu się wywala przy placowaniu coś źle !!
                     parentPlace(child,a1);
                 }
                 currentField.add(a1);

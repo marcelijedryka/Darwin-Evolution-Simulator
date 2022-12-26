@@ -165,14 +165,11 @@ public class Animal {
             positionChanged(currentPos, position);
             currentPos = position;
         } else {
-            energyLoss(loss);
+            energyLoss(map.getBreedEnergyLoss());
+//            energyLoss(loss);
             map.removeAnimal(this);
             map.randomPlace(this);
         }
-
-//        if (this.dead) {
-//            map.removeAnimal(this);
-//        }
     }
 
     public void standardMoveRotate(){

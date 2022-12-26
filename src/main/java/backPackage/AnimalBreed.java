@@ -8,6 +8,7 @@ public class AnimalBreed {
         Animal child = new Animal(a1.getMap() , energy , a1.getGenes().size() , a1.getLoss() , a1.getEngine());
         child.getEngine().addAnimaltoList(child);
         child.setAncestorGenotype(a1,a2);
+        child.setCurrentPos(a1.getCurrentPos());
         return child;
     }
 

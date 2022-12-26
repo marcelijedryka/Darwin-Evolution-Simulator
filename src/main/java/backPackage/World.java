@@ -14,9 +14,9 @@ public class World {
         Krańce mapy i wzrost roślinności do przedyskutowania jak rozwiązać
         */
 
-        Field field = new Field(4,4 , 4 , 2 , 15,1 , 0 , 5,
-                1 ,2 , 1);
-        IEngine engine = new SimulationEngine(field,100,4,10,1,10 );
+        Field field = new Field(20, 20 , 4 , 20, 15,1 ,
+                0 , 5, 1 ,30 , 20);
+        IEngine engine = new SimulationEngine(field,1000,10,50,5,10);
         engine.run();
     }
 
