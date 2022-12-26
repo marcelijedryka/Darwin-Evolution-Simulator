@@ -161,15 +161,46 @@ public class Animal {
             this.energy = this.energy + map.eatGrass(position);
         }
 
-        if (map.canMoveTo(position)) {
-            positionChanged(currentPos, position);
-            currentPos = position;
-        } else {
-            energyLoss(map.getBreedEnergyLoss());
-//            energyLoss(loss);
-            map.removeAnimal(this);
-            map.randomPlace(this);
+
+        if(map.getMapVariant() == 1) {
+            if (map.canMoveTo(position)) {
+                positionChanged(currentPos, position);
+                currentPos = position;
+            } else {
+                energyLoss(map.getBreedEnergyLoss());
+                map.removeAnimal(this);
+                map.randomPlace(this);
+            }
         }
+
+        if (map.getMapVariant() == 0) {
+            if (map.canMoveTo(position)) {
+                /*
+                Zwykły ruch
+                 */
+                positionChanged(currentPos, position);
+                currentPos = position;
+            } else if (map.canMoveToOnEarth(position)) {
+                /*
+                Kulistość ziemi
+                 */
+                if(position.getX() == -1) {
+                    position = new Vector2d(map.getWidth() - 1, position.getY());
+                }
+                else {
+                    position = new Vector2d( 0, position.getY());
+                }
+                positionChanged(currentPos, position);
+                currentPos = position;
+            }else {
+                /*
+                Obrót przy "uderzeniu o barierę"
+                 */
+                int currentOrient_int = (currentOrient.ordinal() + 4) % 8 ;
+                currentOrient = MapDirection.values()[currentOrient_int];
+            }
+        }
+
     }
 
     public void standardMoveRotate(){
@@ -180,4 +211,5 @@ public class Animal {
             geneid = 0;
         }
     }
+
 }
