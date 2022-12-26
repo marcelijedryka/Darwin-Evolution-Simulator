@@ -16,19 +16,22 @@ public class Animal {
 
     private float energy;
     private final Field map;
+    private final int startingEnergy;
+    private final int loss;
 
-    private final float loss;
+    private final SimulationEngine engine;
 
     private ArrayList<IPositionChangeObserver> observerList;
 
-    public Animal(Field map, int energy , int genotypeLength , float energyLoss ){
+    public Animal(Field map, int energy , int genotypeLength , int energyLoss ,SimulationEngine engine){
         this.currentOrient = MapDirection.NORTH;
         this.energy = energy;
+        this.startingEnergy = energy;
         this.map = map;
         this.geneid = 0;
         this.loss = energyLoss;
         this.setRandomGenotype(genotypeLength);
-
+        this.engine = engine;
         this.observerList = new ArrayList<>();
         addObserver((AbstractWorldMap) map);
     }
@@ -53,6 +56,14 @@ public class Animal {
         return geneid;
     }
 
+    public int getStartingEnergy() {
+        return startingEnergy;
+    }
+
+    public SimulationEngine getEngine() {
+        return engine;
+    }
+
     public boolean isDead() {
         return dead;
     }
@@ -61,7 +72,7 @@ public class Animal {
         return map;
     }
 
-    public float getLoss() {
+    public int getLoss() {
         return loss;
     }
 
@@ -107,8 +118,8 @@ public class Animal {
 
     }
 
-    public void energyLoss(){
-        energy = energy - loss;
+    public void energyLoss(int energyLoss){
+        energy = energy - energyLoss;
         if (energy <= 0){
             this.dead = true;
         }
@@ -154,7 +165,7 @@ public class Animal {
             positionChanged(currentPos, position);
             currentPos = position;
         } else {
-            energyLoss();
+            energyLoss(loss);
             map.removeAnimal(this);
             map.randomPlace(this);
         }
