@@ -16,8 +16,6 @@ public class World {
         Mapa:
             0 - kula ziemska
             1 - piekielny portal
-
-        Krańce mapy i wzrost roślinności do przedyskutowania jak rozwiązać
         */
 
         Field field = new Field(20, 20 , 100 , 5, 15,1 ,
