@@ -35,7 +35,7 @@ public class SimulationEngine implements IEngine {
 
     @Override
     public void run() {
-
+        visualize(0);
         for(int i=0 ; i < evolutionTime ; i++){
             Iterator<Animal> iterator = animals.iterator();
             while (iterator.hasNext()) {
@@ -51,9 +51,7 @@ public class SimulationEngine implements IEngine {
             }
             map.checkPossibleBreed();
             map.generateNewGrass(map.getNewGrassAmount());
-            System.out.println("Number of animals: " + animals.size());
-            System.out.println("Time: " + i);
-            System.out.println(map);
+            visualize(i+1);
 
 
 
@@ -61,6 +59,14 @@ public class SimulationEngine implements IEngine {
         System.out.println("_________________________________________________________________");
         System.out.println("\n" + animals.size()+ " SURVIVED "+ evolutionTime+ " ITERATIONS\n");
         System.out.println("_________________________________________________________________");
+    }
+
+    public void visualize(int time) {
+        System.out.println("Number of animals: " + animals.size());
+        System.out.println("Number of weed: " + map.grassMap.size());
+        System.out.println("Number of free space: " + (map.getWidth()*map.getHeight() - map.grassMap.size() - map.getAnimalMap().size()));
+        System.out.println("Time: " + time);
+        System.out.println(map);
     }
 
     public float getEnergyLoss() {
