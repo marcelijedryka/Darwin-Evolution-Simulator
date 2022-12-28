@@ -119,17 +119,30 @@ public class Field extends AbstractWorldMap {
             }
         }
         else if (grassVariant == 1){
+//          Wariant skażonych pól, początkowy pas niepożądany
             Random roll = new Random();
             List<Vector2d> sortedPositions = deathCountMap.entrySet().stream()
                     .sorted(Map.Entry.comparingByValue())
                     .map(Map.Entry::getKey).toList();
             int i = 0;
+            int preferableAmountSize = (int) (sortedPositions.size() * 0.2);
+            int unpreferableAmountSize = sortedPositions.size() - preferableAmountSize;
             while (i < amount) {
                 if (grassMap.size() == width * height) break;
-                Vector2d position = sortedPositions.get(roll.nextInt(sortedPositions.size()));
-                if (!isOccupiedByGrass(position)) {
-                    grassMap.put(position, new Grass(position));
-                    i++;
+                double rand = roll.nextDouble();
+                if (rand <= 0.8) {
+                    Vector2d position = sortedPositions.get(roll.nextInt(preferableAmountSize));
+                    if (!isOccupiedByGrass(position)) {
+                        grassMap.put(position, new Grass(position));
+                        i++;
+                    }
+                }
+                else{
+                    Vector2d position = sortedPositions.get(preferableAmountSize + roll.nextInt(unpreferableAmountSize));
+                    if (!isOccupiedByGrass(position)) {
+                        grassMap.put(position, new Grass(position));
+                        i++;
+                    }
                 }
             }
         }
