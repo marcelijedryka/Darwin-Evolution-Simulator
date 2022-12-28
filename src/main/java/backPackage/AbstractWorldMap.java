@@ -34,13 +34,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     abstract public int eatGrass(Vector2d position);
 
     @Override
-    public void removeAnimal(Animal animal){
-        Vector2d position = animal.getCurrentPos();
-        animalMap.get(position).remove(animal);
-        if (animalMap.get(position).size() == 0){
-            animalMap.remove(position);
-        }
-    }
+    abstract public void removeAnimal(Animal animal);
 
     @Override
     public void insertAnimal(Animal animal, Vector2d position){

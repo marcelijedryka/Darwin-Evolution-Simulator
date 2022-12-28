@@ -21,12 +21,12 @@ public class World {
             1 - piekielny portal
         */
 
-//        Field field = new Field(20, 20 , 100 , 5, 15,1 ,
-//                0 , 5, 1 ,60 , 50, 0,
-//                0);
-//        IEngine engine = new SimulationEngine(field,300,25,50,5,10);
-//        engine.run();
-        Application.launch(App.class);
+        Field field = new Field(20, 20 , 100 , 5, 15,1 ,
+                0 , 5, 1 ,60 , 50, 0,
+                1);
+        IEngine engine = new SimulationEngine(field,300,25,50,5,10);
+        engine.run();
+//        Application.launch(App.class);
 
     }
 

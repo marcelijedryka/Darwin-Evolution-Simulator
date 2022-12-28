@@ -165,6 +165,7 @@ public class App extends Application {
         startButton.setOnAction(event -> {
             ParameterHolder x = getParams();
             System.out.println(x);
+            Application.launch(VisualizationApp.class);
         });
 
         VBox buttons = new VBox(startButton);
