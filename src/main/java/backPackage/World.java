@@ -25,7 +25,7 @@ public class World {
 //                0 , 5, 1 ,60 , 50, 0,
 //                1);
 //        IEngine engine = new SimulationEngine(field,300,25,50,5,10);
-//        engine.run();
+////        engine.run();
         Application.launch(App.class);
 
     }

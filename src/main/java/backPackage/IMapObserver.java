@@ -1,2 +1,5 @@
-package backPackage;public interface IMapObserver {
+package backPackage;
+
+public interface IMapObserver {
+    public void updateMap();
 }

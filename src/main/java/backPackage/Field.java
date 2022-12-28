@@ -28,6 +28,8 @@ public class Field extends AbstractWorldMap {
 
     Map<Vector2d, Integer> deathCountMap;
 
+    IMapObserver observer;
+
     public Field(int height , int width , int grassAmount , int newGrassAmount , int energyBoost,
                  int GenotypeVariant , int minMutation , int maxMutation , int AnimalMoveVariant,
                  int minBreedEnergy , int breedEnergyLoss, int mapVariant, int grassVariant){
@@ -176,7 +178,7 @@ public class Field extends AbstractWorldMap {
         return maxMutation;
     }
 
-    public Map<Vector2d, Object> getGrassMap() {
+    public Map<Vector2d, Grass> getGrassMap() {
         return grassMap;
     }
 
@@ -340,4 +342,11 @@ public class Field extends AbstractWorldMap {
 
     }
 
+    public void addMapObserver(IMapObserver observer) {
+        this.observer = observer;
+    }
+
+    public void notifyObserver() {
+        observer.updateMap();
+    }
 }
