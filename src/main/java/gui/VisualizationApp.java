@@ -20,9 +20,7 @@ public class VisualizationApp implements IMapObserver {
     private Field field;
     private ParameterHolder params;
     private int squareSize;
-
     private SimulationEngine engine;
-
     private Canvas mapCanvas;
     private GraphicsContext WorldMap;
 
@@ -67,6 +65,7 @@ public class VisualizationApp implements IMapObserver {
     public void updateMap() {
         Platform.runLater(() -> {
             drawMapCanvas();
+            drawStats();
         });
     }
 
@@ -82,19 +81,24 @@ public class VisualizationApp implements IMapObserver {
     }
 
     private void drawMapCanvas() {
-        WorldMap.setFill(Color.valueOf("#006400"));
+        WorldMap.setFill(Color.LIGHTGREEN);
         WorldMap.fillRect(0, 0, field.getWidth() * squareSize, field.getHeight() * squareSize);
 
         for (Grass grass : field.getGrassMap().values()) {
             Vector2d position = grass.getPosition();
-            WorldMap.setFill(Color.valueOf("#33F03E"));
+            WorldMap.setFill(Color.DARKGREEN);
             WorldMap.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
         }
 
         for (Vector2d position : field.getAnimalMap().keySet()) {
-            WorldMap.setFill(Color.valueOf("#A9A9A9"));
+            WorldMap.setFill(Color.BROWN);
             WorldMap.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
         }
     }
+
+    public void drawStats(){
+    }
+
+
 
 }

@@ -38,7 +38,7 @@ public class SimulationEngine implements IEngine, Runnable {
 
     @Override
     public void run() {
-        visualize(0);
+//        visualize(0);
         for(int i=0 ; i < evolutionTime ; i++){
             Iterator<Animal> iterator = animals.iterator();
             while (iterator.hasNext()) {
@@ -58,7 +58,7 @@ public class SimulationEngine implements IEngine, Runnable {
 //            Tylko w aplikacji
             map.notifyObserver();
 
-            visualize(i+1);
+//            visualize(i+1);
             try {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
@@ -68,9 +68,9 @@ public class SimulationEngine implements IEngine, Runnable {
 
 
         }
-        System.out.println("_________________________________________________________________");
-        System.out.println("\n" + animals.size()+ " SURVIVED "+ evolutionTime+ " ITERATIONS\n");
-        System.out.println("_________________________________________________________________");
+//        System.out.println("_________________________________________________________________");
+//        System.out.println("\n" + animals.size()+ " SURVIVED "+ evolutionTime+ " ITERATIONS\n");
+//        System.out.println("_________________________________________________________________");
     }
 
     public void visualize(int time) {
