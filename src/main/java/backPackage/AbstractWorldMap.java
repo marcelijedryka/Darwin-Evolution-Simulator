@@ -5,7 +5,7 @@ import java.util.*;
 public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver{
 
     protected HashMap<Vector2d , PriorityQueue<Animal>> animalMap;
-    protected HashMap<Vector2d , Object> grassMap;
+    protected HashMap<Vector2d , Grass> grassMap;
 
 
     @Override

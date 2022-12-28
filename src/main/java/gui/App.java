@@ -35,6 +35,8 @@ public class App extends Application {
     private TextField genotypeLength;
     private TextField simulationTime;
     private TextField dailyEnergyCost;
+
+    private TextField speed;
     private ComboBox<String> mapVar;
     private ComboBox<String> behVar;
     private ComboBox<String> plantVar;
@@ -50,6 +52,7 @@ public class App extends Application {
         Text mHeigth = new Text("Map Heigth:   ");
         mHeigth.setTextAlignment(TextAlignment.CENTER);
         mapHeight = new TextField();
+
         mapHeight.setMaxWidth(100);
         HBox mapH = new HBox(mHeigth , mapHeight);
         mapH.setAlignment(Pos.CENTER);
@@ -146,10 +149,16 @@ public class App extends Application {
         HBox eCost = new HBox(dailyEcostParam,dailyEnergyCost);
         eCost.setAlignment(Pos.CENTER);
 
+        Text programmeSpeed = new Text("Set fps:  ");
+        programmeSpeed.setTextAlignment(TextAlignment.CENTER);
+        speed = new TextField();
+        speed.setMaxWidth(100);
+        HBox pSpeed = new HBox(programmeSpeed,speed);
+        pSpeed.setAlignment(Pos.CENTER);
 
         VBox params = new VBox();
         params.getChildren().addAll(description,mapH , mapW ,gSpawn , gEnergy , gGrowth , aSpawn, eStart ,
-                bEnergy , bCost, minMut ,maxMut , genLen , sTime , eCost);
+                bEnergy , bCost, minMut ,maxMut , genLen , sTime , eCost, pSpeed);
 
         params.setAlignment(Pos.CENTER);
 
@@ -185,8 +194,14 @@ public class App extends Application {
 
         Button startButton = new Button("Start Simulation");
         startButton.setOnAction(event -> {
-            ParameterHolder x = getParams();
-            System.out.println(x);
+            try {
+                ParameterHolder x = getParams();
+                System.out.println(x);
+                VisualizationApp visualizer = new VisualizationApp();
+                visualizer.start(new Stage(), x);
+            }catch(Exception e){
+                System.out.println(e);
+            }
 
         });
 
@@ -217,6 +232,7 @@ public class App extends Application {
                 Integer.parseInt(genotypeLength.getText()),
                 Integer.parseInt(simulationTime.getText()),
                 Integer.parseInt(dailyEnergyCost.getText()),
+                Integer.parseInt(speed.getText()),
                 readComboBox(mapVar),
                 readComboBox(behVar),
                 readComboBox(plantVar),

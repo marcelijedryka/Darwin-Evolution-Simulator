@@ -9,13 +9,16 @@ public class SimulationEngine implements IEngine, Runnable {
     private final float energyLoss;
     private final Field map;
     private final ArrayList<Animal> animals;
+    private final int sleepTime;
+
 
 
     // Przekazujemy mapę, długość symualcji, początkową ilość zwierząt i ile energii tracą każdego dnia
-    public SimulationEngine(Field map , int evolutionTime , int animalAmount , int startEnergy , int energyLoss , int genotypeLength) {
+    public SimulationEngine(Field map , int evolutionTime , int animalAmount , int startEnergy , int energyLoss , int genotypeLength, int speed) {
         this.map=map;
         this.energyLoss = energyLoss;
         this.evolutionTime =evolutionTime;
+        this.sleepTime = speed;
         animals = new ArrayList<Animal>();
         for(int i = 0 ; i < animalAmount ; i++){
             Animal possible_animal = new Animal(map,startEnergy , genotypeLength , energyLoss , this);
@@ -52,8 +55,15 @@ public class SimulationEngine implements IEngine, Runnable {
             map.generateNewGrass(map.getNewGrassAmount());
             map.checkPossibleEating();
             map.checkPossibleBreed();
+//            Tylko w aplikacji
+            map.notifyObserver();
 
             visualize(i+1);
+            try {
+                Thread.sleep(sleepTime);
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
 
 
 

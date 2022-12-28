@@ -24,10 +24,12 @@ public class ParameterHolder {
     private int plantVar;
     private int mutationVar;
 
+    private int speed;
+
     public ParameterHolder(int mapHeight,int mapWidth,int grassAmount,int grassEnergyBoost,
                            int dailyGrassGrowth,int animalAmount,int startingEnergy,int minBreedEnergy,
                            int breedEnergyLoss, int minMutation, int maxMutation, int genotypeLength, int simulationTime,
-                           int dailyEnergyCost ,int mapVar, int behVar, int plantVar, int mutationVar){
+                           int dailyEnergyCost, int speed ,int mapVar, int behVar, int plantVar, int mutationVar){
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         this.grassAmount = grassAmount;
@@ -42,11 +44,11 @@ public class ParameterHolder {
         this.genotypeLength = genotypeLength;
         this.simulationTime = simulationTime;
         this.dailyEnergyCost = dailyEnergyCost;
+        this.speed = speed;
         this.mapVar = mapVar;
         this.behVar = behVar;
         this.plantVar = plantVar;
         this.mutationVar = mutationVar;
-
     }
 
     @Override
@@ -68,6 +70,7 @@ public class ParameterHolder {
                 ", behVar=" + behVar +
                 ", plantVar=" + plantVar +
                 ", mutationVar=" + mutationVar +
+                ", FPS =" + speed +
                 '}';
     }
 
@@ -138,4 +141,6 @@ public class ParameterHolder {
     public int getMutationVar() {
         return mutationVar;
     }
+
+    public int getSpeed() { return speed;}
 }
