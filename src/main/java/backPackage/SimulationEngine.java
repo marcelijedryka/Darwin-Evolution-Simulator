@@ -3,7 +3,7 @@ package backPackage;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class SimulationEngine implements IEngine {
+public class SimulationEngine implements IEngine, Runnable {
 
     private final int evolutionTime;
     private final float energyLoss;
@@ -49,8 +49,10 @@ public class SimulationEngine implements IEngine {
                 }
 
             }
-            map.checkPossibleBreed();
             map.generateNewGrass(map.getNewGrassAmount());
+            map.checkPossibleEating();
+            map.checkPossibleBreed();
+
             visualize(i+1);
 
 

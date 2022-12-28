@@ -1,6 +1,7 @@
 package backPackage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Field extends AbstractWorldMap {
 
@@ -11,7 +12,6 @@ public class Field extends AbstractWorldMap {
 
     private final int energyboost;
 
-    // ilość nowej trawy w każdym ruchu
     private final int newGrassAmount;
 
     private final int height;
@@ -25,6 +25,8 @@ public class Field extends AbstractWorldMap {
     private final int mapVariant;
 
     private final int grassVariant;
+
+    Map<Vector2d, Integer> deathCountMap;
 
     public Field(int height , int width , int grassAmount , int newGrassAmount , int energyBoost,
                  int GenotypeVariant , int minMutation , int maxMutation , int AnimalMoveVariant,
@@ -46,7 +48,16 @@ public class Field extends AbstractWorldMap {
         this.mapVariant = mapVariant;
         this.grassVariant = grassVariant;
 
+        this.deathCountMap =  new HashMap<>();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                deathCountMap.put(new Vector2d(x, y), 0);
+            }
+        }
         generateNewGrass(grassAmount);
+
+
+
     }
 
 //    public void generateNewGrass(){
@@ -107,9 +118,33 @@ public class Field extends AbstractWorldMap {
                 }
             }
         }
-        else{
-            System.out.println("\n\n\n\n\n\n\n!!! JESZCZE BRAK ROZWIĄZANIA !!!!\n\n\n\n\n\n\n");
-            System.exit(0);
+        else if (grassVariant == 1){
+//          Wariant skażonych pól, początkowy pas niepożądany
+            Random roll = new Random();
+            List<Vector2d> sortedPositions = deathCountMap.entrySet().stream()
+                    .sorted(Map.Entry.comparingByValue())
+                    .map(Map.Entry::getKey).toList();
+            int i = 0;
+            int preferableAmountSize = (int) (sortedPositions.size() * 0.2);
+            int unpreferableAmountSize = sortedPositions.size() - preferableAmountSize;
+            while (i < amount) {
+                if (grassMap.size() == width * height) break;
+                double rand = roll.nextDouble();
+                if (rand <= 0.8) {
+                    Vector2d position = sortedPositions.get(roll.nextInt(preferableAmountSize));
+                    if (!isOccupiedByGrass(position)) {
+                        grassMap.put(position, new Grass(position));
+                        i++;
+                    }
+                }
+                else{
+                    Vector2d position = sortedPositions.get(preferableAmountSize + roll.nextInt(unpreferableAmountSize));
+                    if (!isOccupiedByGrass(position)) {
+                        grassMap.put(position, new Grass(position));
+                        i++;
+                    }
+                }
+            }
         }
     }
 
@@ -247,7 +282,6 @@ public class Field extends AbstractWorldMap {
         return GenotypeVariant;
     }
 
-    //będzie działać przy założeniu że usuwamy z mapy pola na których nie stoją zwierzęta
     public void checkPossibleBreed(){
         for (Map.Entry<Vector2d , PriorityQueue<Animal>> set : animalMap.entrySet()){
             PriorityQueue<Animal> currentField = set.getValue();
@@ -270,6 +304,40 @@ public class Field extends AbstractWorldMap {
 
     public int getGrassVariant(){
         return grassVariant;
+    }
+
+    public void checkPossibleEating(){
+        for (Map.Entry<Vector2d , PriorityQueue<Animal>> set : animalMap.entrySet()){
+            PriorityQueue<Animal> currentField = set.getValue();
+
+            if(currentField.size() >= 1) {
+                Animal a1 = currentField.poll();
+                Vector2d position = a1.getCurrentPos();
+                if (isOccupiedByGrass(position)) {
+                    a1.energyGain(eatGrass(position));
+                }
+                currentField.add(a1);
+            }
+
+        }
+
+    }
+
+    @Override
+    public void removeAnimal(Animal animal){
+        Vector2d position = animal.getCurrentPos();
+        animalMap.get(position).remove(animal);
+        if (animalMap.get(position).size() == 0){
+            animalMap.remove(position);
+        }
+        if(deathCountMap.containsKey(position)) {
+            int count = deathCountMap.get(position);
+            deathCountMap.put(position, count + 1);
+        }
+        else {
+            deathCountMap.put(position, 1);
+        }
+
     }
 
 }

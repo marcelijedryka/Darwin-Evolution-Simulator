@@ -24,7 +24,9 @@ public class Animal {
     private ArrayList<IPositionChangeObserver> observerList;
 
     public Animal(Field map, int energy , int genotypeLength , int energyLoss ,SimulationEngine engine){
-        this.currentOrient = MapDirection.NORTH;
+        Random random = new Random();
+        int startingOrientInt = random.nextInt(8);
+        this.currentOrient = MapDirection.values()[startingOrientInt];
         this.energy = energy;
         this.startingEnergy = energy;
         this.map = map;
@@ -125,6 +127,10 @@ public class Animal {
         }
     }
 
+    public void energyGain(int energyGain){
+        energy = energy + energyGain;
+    }
+
 
     public void move() {
 
@@ -157,9 +163,9 @@ public class Animal {
             case WEST -> position =position.add(new Vector2d(-1, 0));
             case NORTHWEST -> position =position.add(new Vector2d(-1, 1));
         }
-        if (map.objectAt(position) instanceof Grass) {
-            this.energy = this.energy + map.eatGrass(position);
-        }
+//        if (map.objectAt(position) instanceof Grass) {
+//            this.energy = this.energy + map.eatGrass(position);
+//        }
 
 
         if(map.getMapVariant() == 1) {
