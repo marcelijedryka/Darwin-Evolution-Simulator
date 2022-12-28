@@ -5,8 +5,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -28,6 +33,8 @@ public class App extends Application {
     private TextField  minMutation;
     private TextField maxMutation;
     private TextField genotypeLength;
+    private TextField simulationTime;
+    private TextField dailyEnergyCost;
     private ComboBox<String> mapVar;
     private ComboBox<String> behVar;
     private ComboBox<String> plantVar;
@@ -125,9 +132,24 @@ public class App extends Application {
        HBox genLen = new HBox(genotypeParam , genotypeLength);
        genLen.setAlignment(Pos.CENTER);
 
+       Text timeParam = new Text("Simulation time:   ");
+       timeParam.setTextAlignment(TextAlignment.CENTER);
+       simulationTime = new TextField();
+       simulationTime.setMaxWidth(100);
+       HBox sTime = new HBox(timeParam , simulationTime);
+       sTime.setAlignment(Pos.CENTER);
+
+        Text dailyEcostParam = new Text("Daily energy cost:  ");
+        dailyEcostParam.setTextAlignment(TextAlignment.CENTER);
+        dailyEnergyCost = new TextField();
+        dailyEnergyCost.setMaxWidth(100);
+        HBox eCost = new HBox(dailyEcostParam,dailyEnergyCost);
+        eCost.setAlignment(Pos.CENTER);
+
 
         VBox params = new VBox();
-        params.getChildren().addAll(description,mapH , mapW ,gSpawn , gEnergy , gGrowth , aSpawn, eStart ,bEnergy , bCost, minMut ,maxMut , genLen);
+        params.getChildren().addAll(description,mapH , mapW ,gSpawn , gEnergy , gGrowth , aSpawn, eStart ,
+                bEnergy , bCost, minMut ,maxMut , genLen , sTime , eCost);
 
         params.setAlignment(Pos.CENTER);
 
@@ -145,12 +167,12 @@ public class App extends Application {
         behaviorV.setAlignment(Pos.CENTER);
 
 
-
         Text plantVariant = new Text("Select plant growth variant");
         plantVar = new ComboBox<String>();
         plantVar.getItems().addAll("Forested Equators" , "Toxic Corpses");
         VBox plantV = new VBox(plantVariant , plantVar);
         plantV.setAlignment(Pos.CENTER);
+
 
         Text mutationVariant = new Text("Select mutation variant");
         mutationVar = new ComboBox<String>();
@@ -165,15 +187,14 @@ public class App extends Application {
         startButton.setOnAction(event -> {
             ParameterHolder x = getParams();
             System.out.println(x);
-            Application.launch(VisualizationApp.class);
+
         });
 
         VBox buttons = new VBox(startButton);
         buttons.setAlignment(Pos.CENTER);
 
         VBox root = new VBox(params , variants , buttons);
-
-        Scene ParamScreen = new Scene(root , 600 , 600);
+        Scene ParamScreen = new Scene(root , 600 , 600, Color.LIGHTGREEN);
         primaryStage.setScene(ParamScreen);
         primaryStage.setTitle("Evolution Simulator");
         primaryStage.getIcons().add(new Image(new FileInputStream("src/main/resources/EvolutionIcon.png")));
@@ -194,6 +215,8 @@ public class App extends Application {
                 Integer.parseInt(minMutation.getText()),
                 Integer.parseInt(maxMutation.getText()),
                 Integer.parseInt(genotypeLength.getText()),
+                Integer.parseInt(simulationTime.getText()),
+                Integer.parseInt(dailyEnergyCost.getText()),
                 readComboBox(mapVar),
                 readComboBox(behVar),
                 readComboBox(plantVar),
