@@ -23,7 +23,9 @@ public class Field extends AbstractWorldMap {
     private final int minBreedEnergy;
     private final int breedEnergyLoss;
     private final int mapVariant;
-
+    private float avgLifetime;
+    private int deadAnimals;
+    private int yearslivedsummary;
     private final int grassVariant;
 
     Map<Vector2d, Integer> deathCountMap;
@@ -49,7 +51,9 @@ public class Field extends AbstractWorldMap {
         this.breedEnergyLoss = breedEnergyLoss;
         this.mapVariant = mapVariant;
         this.grassVariant = grassVariant;
-
+        this.avgLifetime = 0;
+        this.deadAnimals = 0;
+        this.yearslivedsummary = 0;
         this.deathCountMap =  new HashMap<>();
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -348,5 +352,19 @@ public class Field extends AbstractWorldMap {
 
     public void notifyObserver() {
         observer.updateMap();
+    }
+
+    public int calculateFreeFields(){
+        return height * width - (animalMap.size() + grassMap.size());
+    }
+
+    public void updateAvgLifetime(int animalLifeTime){
+        deadAnimals = deadAnimals + 1;
+        yearslivedsummary = yearslivedsummary + animalLifeTime;
+        avgLifetime = yearslivedsummary / deadAnimals;
+    }
+
+    public float getAvgLifetime() {
+        return avgLifetime;
     }
 }

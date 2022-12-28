@@ -10,15 +10,20 @@ public class SimulationEngine implements IEngine, Runnable {
     private final Field map;
     private final ArrayList<Animal> animals;
     private final int sleepTime;
+    private int currentYear;
+    private int freeFields;
+    private float avgEnergy;
 
 
 
     // Przekazujemy mapę, długość symualcji, początkową ilość zwierząt i ile energii tracą każdego dnia
     public SimulationEngine(Field map , int evolutionTime , int animalAmount , int startEnergy , int energyLoss , int genotypeLength, int speed) {
         this.map=map;
+        this.freeFields = map.getHeight() * map.getWidth();
         this.energyLoss = energyLoss;
         this.evolutionTime =evolutionTime;
         this.sleepTime = speed;
+        this.currentYear = 0;
         animals = new ArrayList<Animal>();
         for(int i = 0 ; i < animalAmount ; i++){
             Animal possible_animal = new Animal(map,startEnergy , genotypeLength , energyLoss , this);
@@ -40,6 +45,9 @@ public class SimulationEngine implements IEngine, Runnable {
     public void run() {
 //        visualize(0);
         for(int i=0 ; i < evolutionTime ; i++){
+            currentYear = i + 1;
+            freeFields = map.calculateFreeFields();
+            avgEnergy = calculateAvgEnergy();
             Iterator<Animal> iterator = animals.iterator();
             while (iterator.hasNext()) {
                 Animal currentAnimal = iterator.next();
@@ -84,5 +92,27 @@ public class SimulationEngine implements IEngine, Runnable {
     public float getEnergyLoss() {
         return energyLoss;
     }
+
+    public int getCurrentYear() {
+        return currentYear;
+    }
+
+    public int getFreeFields() {
+        return freeFields;
+    }
+
+    public float getAvgEnergy() {
+        return avgEnergy;
+    }
+
+    public float calculateAvgEnergy(){
+        int energy = 0;
+        for(Animal animal : animals){
+            energy = energy + animal.getEnergy();
+        }
+        return energy / animals.size();
+    }
 }
+
+
 

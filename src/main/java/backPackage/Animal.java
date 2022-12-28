@@ -14,11 +14,11 @@ public class Animal {
 
     private boolean dead = false;
 
-    private float energy;
+    private int energy;
     private final Field map;
     private final int startingEnergy;
     private final int loss;
-
+    private int lifeTime;
     private final SimulationEngine engine;
 
     private ArrayList<IPositionChangeObserver> observerList;
@@ -35,6 +35,7 @@ public class Animal {
         this.setRandomGenotype(genotypeLength);
         this.engine = engine;
         this.observerList = new ArrayList<>();
+        this.lifeTime = 0;
         addObserver((AbstractWorldMap) map);
     }
 
@@ -48,6 +49,10 @@ public class Animal {
         for(IPositionChangeObserver observer: observerList){
             observer.positionChanged(this, oldPosition, newPosition);
         }
+    }
+
+    public int getLifeTime() {
+        return lifeTime;
     }
 
     public MapDirection getCurrentOrient() {
@@ -102,7 +107,7 @@ public class Animal {
         return currentPos;
     }
 
-    public float getEnergy() {
+    public int getEnergy() {
         return energy;
     }
 
@@ -124,6 +129,7 @@ public class Animal {
         energy = energy - energyLoss;
         if (energy <= 0){
             this.dead = true;
+            map.updateAvgLifetime(this.lifeTime);
         }
     }
 
@@ -206,6 +212,8 @@ public class Animal {
                 currentOrient = MapDirection.values()[currentOrient_int];
             }
         }
+
+        lifeTime = lifeTime + 1;
 
     }
 
