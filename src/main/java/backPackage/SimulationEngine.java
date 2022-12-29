@@ -1,7 +1,9 @@
 package backPackage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.SortedSet;
 
 public class SimulationEngine implements IEngine, Runnable {
 
@@ -52,18 +54,18 @@ public class SimulationEngine implements IEngine, Runnable {
                 runYear(i);
                 i++;
             }
+            try {
+                Thread.sleep(sleepTime);
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
         }
 
         }
 
         public void runYear(int i){
-//            for(int i=0 ; i < evolutionTime ; i++){
-//                if (pause){
-//
-//                };
+
                 currentYear = i + 1;
-                freeFields = map.calculateFreeFields();
-                avgEnergy = calculateAvgEnergy();
                 Iterator<Animal> iterator = animals.iterator();
                 while (iterator.hasNext()) {
                     Animal currentAnimal = iterator.next();
@@ -79,15 +81,16 @@ public class SimulationEngine implements IEngine, Runnable {
                 map.generateNewGrass(map.getNewGrassAmount());
                 map.checkPossibleEating();
                 map.checkPossibleBreed();
+                freeFields = map.calculateFreeFields();
+                avgEnergy = calculateAvgEnergy();
 //            Tylko w aplikacji
                 map.notifyObserver();
 
+
+
+
 //            visualize(i+1);
-                try {
-                    Thread.sleep(sleepTime);
-                } catch (InterruptedException e) {
-                    System.out.println(e);
-                }
+
         }
 //        System.out.println("_________________________________________________________________");
 //        System.out.println("\n" + animals.size()+ " SURVIVED "+ evolutionTime+ " ITERATIONS\n");
@@ -127,6 +130,30 @@ public class SimulationEngine implements IEngine, Runnable {
 
     public void setPause(boolean pause) {
         this.pause = pause;
+    }
+
+    public ArrayList<Integer> getBestGenes(){
+        HashMap<ArrayList<Integer>, Integer> counts = new HashMap<>();
+
+        for(Animal ani : animals){
+            ArrayList<Integer> currentGenes = ani.getGenes();
+            if(counts.containsKey(currentGenes)){
+                counts.put(currentGenes, counts.get(currentGenes) + 1);
+            }else{
+                counts.put(currentGenes, 1);
+            }
+        }
+
+        ArrayList<Integer> mostPopular = null;
+        int maxCount = 0;
+        for (ArrayList<Integer> gene : counts.keySet()) {
+            if (counts.get(gene) > maxCount) {
+                mostPopular = gene;
+                maxCount = counts.get(gene);
+            }
+        }
+        return mostPopular;
+
     }
 
 

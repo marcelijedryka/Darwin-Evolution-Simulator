@@ -86,7 +86,8 @@ public class Field extends AbstractWorldMap {
     public void generateNewGrass(int amount){
         if (grassVariant == 0) {
             Random roll = new Random();
-            int beltSize = (int) (0.1 * height);
+            int beltSize = height /10 ;
+            if (beltSize <= 0) beltSize = 1;
 
             int i = 0;
             while (i < amount) {
@@ -99,11 +100,11 @@ public class Field extends AbstractWorldMap {
                     int y;
 
                     if (up_down == 1) {
-                        y = roll.nextInt(beltSize) + (width / 2 - beltSize);
+                        y = roll.nextInt(beltSize) + (height / 2 - beltSize);
                     } else {
-                        y = roll.nextInt(beltSize) + (width / 2);
+                        y = roll.nextInt(beltSize) + (height / 2);
                     }
-                    int x = roll.nextInt(height);
+                    int x = roll.nextInt(width);
                     position = new Vector2d(x, y);
                 } else {
                     // Poza pasem równikowym
@@ -111,11 +112,11 @@ public class Field extends AbstractWorldMap {
                     int y;
 
                     if (up_down == 1) {
-                        y = roll.nextInt(width / 2 - beltSize);
+                        y = roll.nextInt(height / 2 - beltSize);
                     } else {
-                        y = roll.nextInt(width / 2 - beltSize) + (width / 2 + beltSize);
+                        y = roll.nextInt(height / 2 - beltSize) + (height / 2 + beltSize);
                     }
-                    int x = roll.nextInt(height);
+                    int x = roll.nextInt(width);
                     position = new Vector2d(x, y);
                 }
                 if (!isOccupiedByGrass(position)) {
@@ -131,7 +132,7 @@ public class Field extends AbstractWorldMap {
                     .sorted(Map.Entry.comparingByValue())
                     .map(Map.Entry::getKey).toList();
             int i = 0;
-            int preferableAmountSize = (int) (sortedPositions.size() * 0.2);
+            int preferableAmountSize = (sortedPositions.size() * 2) / 10;
             int unpreferableAmountSize = sortedPositions.size() - preferableAmountSize;
             while (i < amount) {
                 if (grassMap.size() == width * height) break;
@@ -295,7 +296,7 @@ public class Field extends AbstractWorldMap {
                 Animal a1 = currentField.poll();
                 Animal a2 = currentField.poll();
                 if (a1.getEnergy() > minBreedEnergy+breedEnergyLoss && a2.getEnergy() > minBreedEnergy+breedEnergyLoss){
-                    Animal child = new AnimalBreed().breed(a1 ,a2 , a1.getStartingEnergy());
+                    Animal child = new AnimalBreed().breed(a1 ,a2);
                     parentPlace(child,a1);
                 }
                 currentField.add(a1);

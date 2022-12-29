@@ -23,12 +23,12 @@ import java.util.PriorityQueue;
 public class VisualizationApp implements IMapObserver {
 
     private Thread engineThread;
-    private Field field;
-    private ParameterHolder params;
+    private final Field field;
+    private final ParameterHolder params;
     private int squareSize;
-    private SimulationEngine engine;
-    private Canvas mapCanvas;
-    private GraphicsContext WorldMap;
+    private final SimulationEngine engine;
+    private Canvas space;
+    private GraphicsContext spaceVisualisation;
     private VBox leftSide;
     private Text currentYear;
     private Text animalAmount;
@@ -36,37 +36,44 @@ public class VisualizationApp implements IMapObserver {
     private Text emptyLand;
     private Text avgEnergy;
     private Text avgLifeTime;
+
+    private Text mostPopularGenotype;
     private int buttonType;
 
+    private int windowWidth = 1400;
+    private int windowHeight = 750;
 
 
-    public void start (Stage primaryStage, ParameterHolder params){
+    public VisualizationApp(ParameterHolder params){
         this.params = params;
-        initialize(this.params);
-        run(primaryStage);
-    }
-
-    private void initialize(ParameterHolder params){
         field = new Field(params.getMapHeight(), params.getMapWidth(), params.getGrassAmount(), params.getDailyGrassGrowth(),
                 params.getGrassEnergyBoost() , params.getMutationVar() , params.getMinMutation(), params.getMaxMutation(),
                 params.getBehVar(), params.getMinBreedEnergy(), params.getBreedEnergyLoss(), params.getMapVar(), params.getPlantVar());
         field.addMapObserver(this);
         engine = new SimulationEngine(field,params.getSimulationTime() , params.getAnimalAmount(), params.getStartingEnergy(),
                 params.getDailyEnergyCost() , params.getGenotypeLength(), params.getSpeed());
+    }
+
+
+    public void start (Stage primaryStage){
+        initialize();
+        run(primaryStage);
+    }
+
+    private void initialize(){
         engineThread = new Thread(engine);
         this.squareSize = calculateSquareSize(field);
-        mapCanvas = new Canvas();
-        mapCanvas.setWidth(field.getWidth() * squareSize);
-        mapCanvas.setHeight(field.getHeight() * squareSize);
-        WorldMap = mapCanvas.getGraphicsContext2D();
+        space = new Canvas();
+        space.setWidth(field.getWidth() * squareSize);
+        space.setHeight(field.getHeight() * squareSize);
+        spaceVisualisation = space.getGraphicsContext2D();
         VBox stats = createStatBox();
 
         this.buttonType = 1;
         Button Stopbutton = new Button("Pause");
-        Stopbutton.setLayoutX(100);
-        Stopbutton.setLayoutY(50);
+        Stopbutton.setLayoutX(400);
+        Stopbutton.setLayoutY(100);
         Stopbutton.setOnAction((ActionEvent event) -> {
-            //nie działa idk dlaczego
             if (buttonType == 1){
                 engine.setPause(false);
                 Stopbutton.setText("Resume");
@@ -84,12 +91,12 @@ public class VisualizationApp implements IMapObserver {
     private void run(Stage primaryStage) {
         primaryStage.setTitle("Simulation");
         VBox mapBox = new VBox();
-        mapBox.getChildren().add(mapCanvas);
-        mapBox.setLayoutX(1400 - mapCanvas.getWidth());
+        mapBox.getChildren().add(space);
+        mapBox.setLayoutX(windowWidth - space.getWidth());
         mapBox.setAlignment(Pos.CENTER);
 
         Group root = new Group(leftSide,mapBox);
-        Scene scene = new Scene(root, 1400, 750);
+        Scene scene = new Scene(root, windowWidth, windowHeight);
         engineThread.start();
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -107,9 +114,9 @@ public class VisualizationApp implements IMapObserver {
         int height = field.getHeight();
         int width = field.getWidth();
         if (width > height) {
-            squareSize = 900 / width;
+            squareSize = (int) (0.7 * windowWidth) / width;
         } else {
-            squareSize = 750 / height;
+            squareSize = windowHeight / height;
         }
         return squareSize;
     }
@@ -156,7 +163,7 @@ public class VisualizationApp implements IMapObserver {
         HBox energyBox = new HBox(avEnergy,avgEnergy);
         energyBox.setAlignment(Pos.CENTER);
 
-        Text avLifeTime = new Text("Current Average lifetime based on age of death : ");
+        Text avLifeTime = new Text("Current Average lifetime  \nbased on age of death:  ");
         avLifeTime.setTextAlignment(TextAlignment.CENTER);
         avLifeTime.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         avgLifeTime = new Text("-");
@@ -164,25 +171,32 @@ public class VisualizationApp implements IMapObserver {
         HBox lifeBox = new HBox(avLifeTime,avgLifeTime);
         lifeBox.setAlignment(Pos.CENTER);
 
-        VBox stats = new VBox(yearBox,animalBox,grassBox,landBox,energyBox,lifeBox);
+        Text mostPopGenome = new Text("Most popular genome: ");
+        mostPopGenome.setTextAlignment(TextAlignment.CENTER);
+        mostPopGenome.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
+        mostPopularGenotype = new Text("-");
+        mostPopularGenotype.setTextAlignment(TextAlignment.CENTER);
+        HBox genomeTextBox = new HBox(mostPopGenome);
+        genomeTextBox.setAlignment(Pos.CENTER);
+        HBox genomeBox = new HBox(mostPopularGenotype);
+        genomeBox.setAlignment(Pos.CENTER);
+
+        VBox stats = new VBox(yearBox,animalBox,grassBox,landBox,energyBox,lifeBox, genomeTextBox ,genomeBox);
         stats.setLayoutX(80);
 
         return stats;
 
     }
 
-//    public HBox createButtonBox(){
-//
-//    }
 
     private void showMapCanvas() {
-        WorldMap.setFill(Color.LIGHTGREEN);
-        WorldMap.fillRect(0, 0, field.getWidth() * squareSize, field.getHeight() * squareSize);
+        spaceVisualisation.setFill(Color.LIGHTGREEN);
+        spaceVisualisation.fillRect(0, 0, field.getWidth() * squareSize, field.getHeight() * squareSize);
 
         for (Grass grass : field.getGrassMap().values()) {
             Vector2d position = grass.getPosition();
-            WorldMap.setFill(Color.DARKGREEN);
-            WorldMap.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
+            spaceVisualisation.setFill(Color.DARKGREEN);
+            spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
         }
 
         //Pokazywanie ile energi ma dane zwierzę
@@ -192,20 +206,20 @@ public class VisualizationApp implements IMapObserver {
             Animal animal = entry.getValue().peek();
 
             if (animal.getEnergy() / params.getDailyEnergyCost() >= 10){
-                WorldMap.setFill(Color.WHITE);
-                WorldMap.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
+                spaceVisualisation.setFill(Color.WHITE);
+                spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
             }else if(animal.getEnergy() / params.getDailyEnergyCost() >= 7){
-                WorldMap.setFill(Color.WHEAT);
-                WorldMap.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
+                spaceVisualisation.setFill(Color.WHEAT);
+                spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
             }else if(animal.getEnergy() / params.getDailyEnergyCost() >= 5){
-                WorldMap.setFill(Color.PERU);
-                WorldMap.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
+                spaceVisualisation.setFill(Color.PERU);
+                spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
             }else if(animal.getEnergy() / params.getDailyEnergyCost() >= 2) {
-                WorldMap.setFill(Color.SADDLEBROWN);
-                WorldMap.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
+                spaceVisualisation.setFill(Color.SADDLEBROWN);
+                spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
             }else{
-                WorldMap.setFill(Color.BLACK);
-                WorldMap.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
+                spaceVisualisation.setFill(Color.BLACK);
+                spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
             }
 
         }
@@ -230,7 +244,8 @@ public class VisualizationApp implements IMapObserver {
         avgLifeTime.setText(String.valueOf(field.getAvgLifetime()));
         avgLifeTime.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
 
-        //zostały najpopulariejsze genotypy do dodania
+        mostPopularGenotype.setText(String.valueOf(engine.getBestGenes()));
+        mostPopularGenotype.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
 
 
     }

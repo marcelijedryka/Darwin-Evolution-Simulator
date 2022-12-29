@@ -149,7 +149,7 @@ public class App extends Application {
         HBox eCost = new HBox(dailyEcostParam,dailyEnergyCost);
         eCost.setAlignment(Pos.CENTER);
 
-        Text programmeSpeed = new Text("Set fps:  ");
+        Text programmeSpeed = new Text("Set time delay:  ");
         programmeSpeed.setTextAlignment(TextAlignment.CENTER);
         speed = new TextField();
         speed.setMaxWidth(100);
@@ -197,8 +197,8 @@ public class App extends Application {
             try {
                 ParameterHolder x = getParams();
                 System.out.println(x);
-                VisualizationApp visualizer = new VisualizationApp();
-                visualizer.start(new Stage(), x);
+                VisualizationApp visualizer = new VisualizationApp(x);
+                visualizer.start(new Stage());
             }catch(Exception e){
                 System.out.println(e);
             }
