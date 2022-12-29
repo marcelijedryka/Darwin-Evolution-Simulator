@@ -19,6 +19,10 @@ public class Animal {
     private final int startingEnergy;
     private final int loss;
     private int lifeTime;
+
+    private int eatenGrass;
+
+    private int offspringAmount;
     private final SimulationEngine engine;
 
     private ArrayList<IPositionChangeObserver> observerList;
@@ -36,6 +40,8 @@ public class Animal {
         this.engine = engine;
         this.observerList = new ArrayList<>();
         this.lifeTime = 0;
+        this.eatenGrass = 0;
+        this.offspringAmount = 0;
         addObserver((AbstractWorldMap) map);
     }
 
@@ -135,6 +141,7 @@ public class Animal {
 
     public void energyGain(int energyGain){
         energy = energy + energyGain;
+        eatenGrass += 1;
     }
 
 
@@ -226,4 +233,15 @@ public class Animal {
         }
     }
 
+    public int getEatenGrass() {
+        return eatenGrass;
+    }
+
+    public void childBorn(){
+        this.offspringAmount += 1;
+    }
+
+    public int getOffspringAmount(){
+        return offspringAmount;
+    }
 }

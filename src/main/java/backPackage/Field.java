@@ -255,13 +255,7 @@ public class Field extends AbstractWorldMap {
     @Override
     public Object objectAt(Vector2d position) {
         if (isOccupiedByAnimal(position)){
-
-            /*
-             * na 95% jest ok, ale jak coś nie zadziała to sprawdzić,
-             * czy na pewno największy element, jeśli nie, użyć .last()
-             */
             return animalMap.get(position).peek();
-
         }
         if (isOccupiedByGrass(position)){
             return grassMap.get(position);
