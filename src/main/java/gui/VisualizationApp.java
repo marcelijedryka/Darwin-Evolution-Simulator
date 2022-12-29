@@ -2,7 +2,9 @@ package gui;
 
 import backPackage.*;
 
+import javafx.event.ActionEvent;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.*;
 import javafx.stage.Stage;
@@ -27,13 +29,14 @@ public class VisualizationApp implements IMapObserver {
     private SimulationEngine engine;
     private Canvas mapCanvas;
     private GraphicsContext WorldMap;
-    private VBox stats;
+    private VBox leftSide;
     private Text currentYear;
     private Text animalAmount;
     private Text grassAmount;
     private Text emptyLand;
     private Text avgEnergy;
     private Text avgLifeTime;
+    private int buttonType;
 
 
 
@@ -56,8 +59,25 @@ public class VisualizationApp implements IMapObserver {
         mapCanvas.setWidth(field.getWidth() * squareSize);
         mapCanvas.setHeight(field.getHeight() * squareSize);
         WorldMap = mapCanvas.getGraphicsContext2D();
-        this.stats = createStatBox();
+        VBox stats = createStatBox();
 
+        this.buttonType = 1;
+        Button Stopbutton = new Button("Pause");
+        Stopbutton.setLayoutX(100);
+        Stopbutton.setLayoutY(50);
+        Stopbutton.setOnAction((ActionEvent event) -> {
+            //nie działa idk dlaczego
+            if (buttonType == 1){
+                engine.setPause(false);
+                Stopbutton.setText("Resume");
+                buttonType = 0;
+            }else{
+                engine.setPause(true);
+                Stopbutton.setText("Pause");
+                buttonType = 1;
+            }});
+
+        this.leftSide = new VBox(stats,Stopbutton);
 
     }
 
@@ -68,7 +88,7 @@ public class VisualizationApp implements IMapObserver {
         mapBox.setLayoutX(1400 - mapCanvas.getWidth());
         mapBox.setAlignment(Pos.CENTER);
 
-        Group root = new Group(stats,mapBox);
+        Group root = new Group(leftSide,mapBox);
         Scene scene = new Scene(root, 1400, 750);
         engineThread.start();
         primaryStage.setScene(scene);
@@ -145,7 +165,7 @@ public class VisualizationApp implements IMapObserver {
         lifeBox.setAlignment(Pos.CENTER);
 
         VBox stats = new VBox(yearBox,animalBox,grassBox,landBox,energyBox,lifeBox);
-        stats.setAlignment(Pos.CENTER);
+        stats.setLayoutX(80);
 
         return stats;
 

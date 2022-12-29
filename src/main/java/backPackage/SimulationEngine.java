@@ -13,6 +13,7 @@ public class SimulationEngine implements IEngine, Runnable {
     private int currentYear;
     private int freeFields;
     private float avgEnergy;
+    private boolean pause = true;
 
 
 
@@ -44,42 +45,53 @@ public class SimulationEngine implements IEngine, Runnable {
     @Override
     public void run() {
 //        visualize(0);
-        for(int i=0 ; i < evolutionTime ; i++){
-            currentYear = i + 1;
-            freeFields = map.calculateFreeFields();
-            avgEnergy = calculateAvgEnergy();
-            Iterator<Animal> iterator = animals.iterator();
-            while (iterator.hasNext()) {
-                Animal currentAnimal = iterator.next();
-                currentAnimal.move();
-                currentAnimal.energyLoss(currentAnimal.getLoss());
-//                System.out.println(currentAnimal.getCurrentPos());
-                if (currentAnimal.isDead()) {
-                    iterator.remove();
-                    map.removeAnimal(currentAnimal);
-                }
+        int i = 0;
+        while (i < evolutionTime && animals.size() > 0){
 
+            if(pause){
+                runYear(i);
+                i++;
             }
-            map.generateNewGrass(map.getNewGrassAmount());
-            map.checkPossibleEating();
-            map.checkPossibleBreed();
+        }
+
+        }
+
+        public void runYear(int i){
+//            for(int i=0 ; i < evolutionTime ; i++){
+//                if (pause){
+//
+//                };
+                currentYear = i + 1;
+                freeFields = map.calculateFreeFields();
+                avgEnergy = calculateAvgEnergy();
+                Iterator<Animal> iterator = animals.iterator();
+                while (iterator.hasNext()) {
+                    Animal currentAnimal = iterator.next();
+                    currentAnimal.move();
+                    currentAnimal.energyLoss(currentAnimal.getLoss());
+//                System.out.println(currentAnimal.getCurrentPos());
+                    if (currentAnimal.isDead()) {
+                        iterator.remove();
+                        map.removeAnimal(currentAnimal);
+                    }
+
+                }
+                map.generateNewGrass(map.getNewGrassAmount());
+                map.checkPossibleEating();
+                map.checkPossibleBreed();
 //            Tylko w aplikacji
-            map.notifyObserver();
+                map.notifyObserver();
 
 //            visualize(i+1);
-            try {
-                Thread.sleep(sleepTime);
-            } catch (InterruptedException e) {
-                System.out.println(e);
-            }
-
-
-
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    System.out.println(e);
+                }
         }
 //        System.out.println("_________________________________________________________________");
 //        System.out.println("\n" + animals.size()+ " SURVIVED "+ evolutionTime+ " ITERATIONS\n");
 //        System.out.println("_________________________________________________________________");
-    }
 
     public void visualize(int time) {
         System.out.println("Number of animals: " + animals.size());
@@ -112,6 +124,12 @@ public class SimulationEngine implements IEngine, Runnable {
         }
         return energy / animals.size();
     }
+
+    public void setPause(boolean pause) {
+        this.pause = pause;
+    }
+
+
 }
 
 
