@@ -12,7 +12,6 @@ public class AnimalBreed {
         child.getEngine().addAnimaltoList(child);
         child.setAncestorGenotype(a1,a2);
         child.setCurrentPos(a1.getCurrentPos());
-        child.rollOrient();
         child.rollGeneID();
         return child;
     }

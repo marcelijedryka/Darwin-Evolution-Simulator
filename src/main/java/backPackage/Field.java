@@ -3,7 +3,7 @@ package backPackage;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Field extends AbstractWorldMap {
+public class Field implements IWorldMap, IPositionChangeObserver {
 
 
     private final Vector2d lowLeft;
@@ -30,6 +30,9 @@ public class Field extends AbstractWorldMap {
 
     Map<Vector2d, Integer> deathCountMap;
 
+    protected HashMap<Vector2d , PriorityQueue<Animal>> animalMap;
+    protected HashMap<Vector2d , Grass> grassMap;
+
     IMapObserver observer;
 
     public Field(int height , int width , int grassAmount , int newGrassAmount , int energyBoost,
@@ -42,8 +45,8 @@ public class Field extends AbstractWorldMap {
         this.upRight = new Vector2d(height-1,width-1);
         this.newGrassAmount = newGrassAmount;
         this.energyboost = energyBoost;
-        super.animalMap = new HashMap<>();
-        super.grassMap = new HashMap<>();
+        this.animalMap = new HashMap<>();
+        this.grassMap = new HashMap<>();
         this.minMutation = minMutation;
         this.maxMutation = maxMutation;
         this.AnimalMoveVariant = AnimalMoveVariant;
@@ -61,28 +64,8 @@ public class Field extends AbstractWorldMap {
             }
         }
         generateNewGrass(grassAmount);
-
-
-
     }
 
-//    public void generateNewGrass(){
-//        Random roll = new Random();
-//        int i = 0;
-//
-//        int beltGrassAmount = (int) (0.8 * newGrassAmount);
-//        int notBeltGrassAmount = newGrassAmount - beltGrassAmount;
-//        int beltSize = (int) (0.2 * height);
-//
-//        while (i < newGrassAmount) {
-//            if (grassMap.size() == width * height) break;
-//            Vector2d position = new Vector2d(roll.nextInt(width), roll.nextInt(height));
-//            if (!isOccupiedByGrass(position)) {
-//                grassMap.put(position, new Grass(position));
-//                i++;
-//            }
-//        }
-//    }
     public void generateNewGrass(int amount){
         if (grassVariant == 0) {
             Random roll = new Random();
@@ -112,12 +95,16 @@ public class Field extends AbstractWorldMap {
                     int y;
 
                     if (up_down == 1) {
-                        y = roll.nextInt(height / 2 - beltSize);
+                        if (height/2 - beltSize > 0) {
+                            y = roll.nextInt(height / 2 - beltSize);
+                        }
+                        else y = 0;
                     } else {
                         y = roll.nextInt(height / 2 - beltSize) + (height / 2 + beltSize);
                     }
                     int x = roll.nextInt(width);
                     position = new Vector2d(x, y);
+
                 }
                 if (!isOccupiedByGrass(position)) {
                     grassMap.put(position, new Grass(position));
@@ -126,14 +113,38 @@ public class Field extends AbstractWorldMap {
             }
         }
         else if (grassVariant == 1){
-//          Wariant skażonych pól, początkowy pas niepożądany
-            Random roll = new Random();
+//          Wariant skażonych pól
             List<Vector2d> sortedPositions = deathCountMap.entrySet().stream()
                     .sorted(Map.Entry.comparingByValue())
                     .map(Map.Entry::getKey).toList();
+
+
+            int lowestCount = 0;
+            int lowestValue = Integer.MAX_VALUE;
+            // Iterate through the map to find the lowest value
+            for (Map.Entry<Vector2d, Integer> entry : deathCountMap.entrySet()) {
+                int value = entry.getValue();
+                if (value < lowestValue) {
+                    lowestValue = value;
+                }
+            }
+            // Iterate through the map again to count how many values match the lowest value
+            for (Map.Entry<Vector2d, Integer> entry : deathCountMap.entrySet()) {
+                int value = entry.getValue();
+                if (value == lowestValue) {
+                    lowestCount++;
+                }
+            }
+
+
             int i = 0;
-            int preferableAmountSize = (sortedPositions.size() * 2) / 10;
+            int preferableAmountSize = lowestCount;
+            if (preferableAmountSize <  (sortedPositions.size() * 2) / 10) {
+                preferableAmountSize = (sortedPositions.size() * 2) / 10;
+            }
             int unpreferableAmountSize = sortedPositions.size() - preferableAmountSize;
+
+            Random roll = new Random();
             while (i < amount) {
                 if (grassMap.size() == width * height) break;
                 double rand = roll.nextDouble();
@@ -144,7 +155,7 @@ public class Field extends AbstractWorldMap {
                         i++;
                     }
                 }
-                else{
+                else if (unpreferableAmountSize > 0){
                     Vector2d position = sortedPositions.get(preferableAmountSize + roll.nextInt(unpreferableAmountSize));
                     if (!isOccupiedByGrass(position)) {
                         grassMap.put(position, new Grass(position));
@@ -152,6 +163,7 @@ public class Field extends AbstractWorldMap {
                     }
                 }
             }
+
         }
     }
 
@@ -199,10 +211,12 @@ public class Field extends AbstractWorldMap {
         return height;
     }
 
+    @Override
     public Vector2d getLowLeft() {
         return lowLeft;
     }
 
+    @Override
     public Vector2d getUpRight() {
         return upRight;
     }
@@ -220,7 +234,7 @@ public class Field extends AbstractWorldMap {
     @Override
     public void randomPlace(Animal animal) {
         Random roll = new Random();
-        Vector2d position = new Vector2d(roll.nextInt(width - 1) , roll.nextInt(height - 1));
+        Vector2d position = new Vector2d(roll.nextInt(width) , roll.nextInt(height));
         animal.setCurrentPos(position);
         /*
         * Jeśli nie ma zwierzaka na danej pozycji, to tworzę TreeSeta dla klucza o tej pozycji
@@ -237,6 +251,12 @@ public class Field extends AbstractWorldMap {
         animalMap.get(parent.getCurrentPos()).add(child);
     }
 
+    public boolean isOccupiedByAnimal(Vector2d position) {
+        return animalMap.containsKey(position);
+    }
+    public boolean isOccupiedByGrass(Vector2d position) {
+        return grassMap.containsKey(position);
+    }
 
     @Override
     public boolean isOccupied(Vector2d position){
@@ -263,6 +283,7 @@ public class Field extends AbstractWorldMap {
         return null;
     }
 
+    @Override
     public int eatGrass(Vector2d position){
         grassMap.remove(position);
         return energyboost;
@@ -325,6 +346,16 @@ public class Field extends AbstractWorldMap {
     }
 
     @Override
+    public void insertAnimal(Animal animal, Vector2d position){
+        if (!isOccupiedByAnimal(position)){
+            Comparator<Animal> cmp = new AnimalComparator();
+            animalMap.put(position, new PriorityQueue<>(cmp));
+        }
+        animalMap.get(position).add(animal);
+    }
+
+
+    @Override
     public void removeAnimal(Animal animal){
         Vector2d position = animal.getCurrentPos();
         animalMap.get(position).remove(animal);
@@ -356,10 +387,16 @@ public class Field extends AbstractWorldMap {
     public void updateAvgLifetime(int animalLifeTime){
         deadAnimals = deadAnimals + 1;
         yearslivedsummary = yearslivedsummary + animalLifeTime;
-        avgLifetime = yearslivedsummary / deadAnimals;
+        avgLifetime =  (float)((int)(yearslivedsummary*10 / (float)deadAnimals))/10;
     }
 
     public float getAvgLifetime() {
         return avgLifetime;
+    }
+
+    @Override
+    public void positionChanged(Animal ani, Vector2d oldPosition, Vector2d newPosition){
+        removeAnimal(ani);
+        insertAnimal(ani, newPosition);
     }
 }

@@ -1,6 +1,7 @@
 package backPackage;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
 
 public class Animal {
@@ -42,7 +43,7 @@ public class Animal {
         this.lifeTime = 0;
         this.eatenGrass = 0;
         this.offspringAmount = 0;
-        addObserver((AbstractWorldMap) map);
+        addObserver(map);
     }
 
     void addObserver(IPositionChangeObserver observer){
@@ -95,6 +96,15 @@ public class Animal {
 
     public ArrayList<Integer> getGenes() {
         return genes;
+    }
+
+    public boolean theSameGenes(ArrayList<Integer> otherGenes){
+        for (int i = 0; i < genes.size(); i++) {
+            if(!Objects.equals(genes.get(i), otherGenes.get(i))){
+                return false;
+            }
+        }
+        return true;
     }
 
     public void setRandomGenotype(int length){
@@ -241,7 +251,6 @@ public class Animal {
     public void rollGeneID(){
         Random roll = new Random();
         this.geneid = roll.nextInt(genes.size());
-        System.out.println(geneid);
     }
     public int getEatenGrass() {
         return eatenGrass;
