@@ -1,11 +1,9 @@
 package backPackage;
 
 import gui.CSVSaver;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.SortedSet;
 
 public class SimulationEngine implements IEngine, Runnable {
 

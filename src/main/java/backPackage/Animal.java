@@ -42,7 +42,7 @@ public class Animal {
         this.lifeTime = 0;
         this.eatenGrass = 0;
         this.offspringAmount = 0;
-        addObserver((AbstractWorldMap) map);
+        addObserver(map);
     }
 
     void addObserver(IPositionChangeObserver observer){

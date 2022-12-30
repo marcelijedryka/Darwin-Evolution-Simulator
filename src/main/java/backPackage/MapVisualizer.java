@@ -1,5 +1,8 @@
 package backPackage;
 /**
+ * We copied it for testing an algorithm in simple visualisation.
+
+
  * The map visualizer converts the {@link IWorldMap} map into a string
  * representation.
  *
