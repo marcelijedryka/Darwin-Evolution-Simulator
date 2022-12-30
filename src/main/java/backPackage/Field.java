@@ -387,7 +387,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
     public void updateAvgLifetime(int animalLifeTime){
         deadAnimals = deadAnimals + 1;
         yearslivedsummary = yearslivedsummary + animalLifeTime;
-        avgLifetime = yearslivedsummary / deadAnimals;
+        avgLifetime =  (float)((int)(yearslivedsummary*10 / (float)deadAnimals))/10;
     }
 
     public float getAvgLifetime() {
