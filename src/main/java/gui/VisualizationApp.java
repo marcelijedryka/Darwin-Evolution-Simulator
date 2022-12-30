@@ -49,13 +49,7 @@ public class VisualizationApp implements IMapObserver {
     private Text consumptionAmount;
     private Text offspringAmount;
     private Text age;
-
-    private Text trakcedHead;
-    private Text genomeText;
-    private Text energyLevelText;
-    private Text consumedText;
-    private Text chlidrenText;
-    private Text ageText;
+    private Text currentGene;
 
     private Animal selected = null;
 
@@ -66,7 +60,7 @@ public class VisualizationApp implements IMapObserver {
                 params.getBehVar(), params.getMinBreedEnergy(), params.getBreedEnergyLoss(), params.getMapVar(), params.getPlantVar());
         field.addMapObserver(this);
         engine = new SimulationEngine(field,params.getSimulationTime() , params.getAnimalAmount(), params.getStartingEnergy(),
-                params.getDailyEnergyCost() , params.getGenotypeLength(), params.getSpeed());
+                params.getDailyEnergyCost() , params.getGenotypeLength(), params.getSpeed() , params.isSaveCSV());
     }
 
 
@@ -101,6 +95,10 @@ public class VisualizationApp implements IMapObserver {
             }});
 
         this.leftSide = new VBox(stats,Stopbutton, selectedAnimalBox);
+        leftSide.setAlignment(Pos.CENTER);
+        leftSide.setSpacing(30);
+        leftSide.setLayoutX(10);
+        leftSide.setLayoutY(70);
 
 
     }
@@ -123,6 +121,7 @@ public class VisualizationApp implements IMapObserver {
             }
         };
         space.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseHit);
+
 
         Group root = new Group(leftSide, canvasBox);
         Scene scene = new Scene(root, windowWidth, windowHeight);
@@ -287,40 +286,51 @@ public class VisualizationApp implements IMapObserver {
     }
 
     private VBox initBoxForSelectedAnimal(){
-        trakcedHead = new Text("Tracked animal parameters: ");
+
+        Text headline = new Text("Statistics of animal that is now being tracked: ");
+        headline.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
+        Text trakcedHead = new Text("Tracked animal parameters: ");
         trakcedHead.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
-        genomeText = new Text("Genome:");
+        Text genomeText = new Text("Genome:");
         genomeText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         genome = new Text("None");
         genome.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         HBox genomeTextBox = new HBox(genomeText, genome);
-        energyLevelText = new Text("Energy level: ");
+
+        Text currentGeneText = new Text("Current gene:  ");
+        currentGeneText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
+        currentGene = new Text("None");
+        currentGene.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
+        HBox currentgeneBox = new HBox(currentGeneText , currentGene);
+
+        Text energyLevelText = new Text("Energy level: ");
         energyLevelText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         energyLevel = new Text("None");
         energyLevel.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         HBox energyLevelBox = new HBox(energyLevelText, energyLevel);
-        consumedText = new Text("Amount of consumed grass: ");
+        Text consumedText = new Text("Amount of consumed grass: ");
         consumedText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         consumptionAmount = new Text("None");
         consumptionAmount.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         HBox consumptionBox = new HBox(consumedText, consumptionAmount);
-        chlidrenText = new Text("Amount of children: ");
+        Text chlidrenText = new Text("Amount of children: ");
         chlidrenText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         offspringAmount = new Text("None");
         offspringAmount.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         HBox childrenBox = new HBox(chlidrenText, offspringAmount);
-        ageText = new Text("Age of animal: ");
+        Text ageText = new Text("Age of animal: ");
         ageText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         age = new Text("None");
         age.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         HBox ageBox = new HBox(ageText, age);
 
 
-        return new VBox(genomeTextBox, energyLevelBox, consumptionBox, childrenBox, ageBox);
+        return new VBox(headline,genomeTextBox,currentgeneBox, energyLevelBox, consumptionBox, childrenBox, ageBox);
     }
 
     private void updateBoxForSelectedAnimal(Animal animal) {
         genome.setText(String.valueOf(animal.getGenes()));
+        currentGene.setText(String.valueOf(animal.getCurrentGene()));
         energyLevel.setText(String.valueOf(animal.getEnergy()));
         consumptionAmount.setText(String.valueOf(animal.getEatenGrass()));
         offspringAmount.setText(String.valueOf(animal.getOffspringAmount()));
