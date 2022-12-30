@@ -1,5 +1,7 @@
 package backPackage;
 
+import gui.CSVSaver;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,23 +18,29 @@ public class SimulationEngine implements IEngine, Runnable {
     private int freeFields;
     private float avgEnergy;
     private boolean pause = true;
+    private boolean saveToCSV;
+    private CSVSaver saver;
 
 
 
     // Przekazujemy mapę, długość symualcji, początkową ilość zwierząt i ile energii tracą każdego dnia
-    public SimulationEngine(Field map , int evolutionTime , int animalAmount , int startEnergy , int energyLoss , int genotypeLength, int speed) {
+    public SimulationEngine(Field map , int evolutionTime , int animalAmount , int startEnergy , int energyLoss , int genotypeLength,
+                            int speed , boolean saveToCSV) {
         this.map=map;
         this.freeFields = map.getHeight() * map.getWidth();
         this.energyLoss = energyLoss;
         this.evolutionTime =evolutionTime;
         this.sleepTime = speed;
         this.currentYear = 0;
+        this.saveToCSV = saveToCSV;
+        saver = new CSVSaver();
         animals = new ArrayList<Animal>();
         for(int i = 0 ; i < animalAmount ; i++){
             Animal possible_animal = new Animal(map,startEnergy , genotypeLength , energyLoss , this);
             map.randomPlace(possible_animal);
             animals.add(possible_animal);
         }
+
 
     }
 
@@ -48,9 +56,13 @@ public class SimulationEngine implements IEngine, Runnable {
     public void run() {
 //        visualize(0);
         int i = 0;
+
         while (i < evolutionTime && animals.size() > 0){
 
             if(pause){
+                if (saveToCSV){
+                    saver.addToStats(map.getAnimalMap().size() , map.getGrassMap().size(),map.calculateFreeFields(), avgEnergy , map.getAvgLifetime());
+                }
                 runYear(i);
                 i++;
             }
@@ -60,7 +72,9 @@ public class SimulationEngine implements IEngine, Runnable {
                 System.out.println(e);
             }
         }
-
+        if(saveToCSV){
+            saver.saveCSVFile();
+        }
         }
 
         public void runYear(int i){

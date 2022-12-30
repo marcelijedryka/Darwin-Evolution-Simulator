@@ -23,13 +23,14 @@ public class ParameterHolder {
     private int behVar;
     private int plantVar;
     private int mutationVar;
-
     private int speed;
+
+    private boolean saveCSV;
 
     public ParameterHolder(int mapHeight,int mapWidth,int grassAmount,int grassEnergyBoost,
                            int dailyGrassGrowth,int animalAmount,int startingEnergy,int minBreedEnergy,
                            int breedEnergyLoss, int minMutation, int maxMutation, int genotypeLength, int simulationTime,
-                           int dailyEnergyCost, int speed ,int mapVar, int behVar, int plantVar, int mutationVar){
+                           int dailyEnergyCost, int speed ,int mapVar, int behVar, int plantVar, int mutationVar , boolean saveCSV){
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         this.grassAmount = grassAmount;
@@ -49,6 +50,7 @@ public class ParameterHolder {
         this.behVar = behVar;
         this.plantVar = plantVar;
         this.mutationVar = mutationVar;
+        this.saveCSV = saveCSV;
     }
 
     @Override
@@ -71,8 +73,11 @@ public class ParameterHolder {
                 ", plantVar=" + plantVar +
                 ", mutationVar=" + mutationVar +
                 ", FPS =" + speed +
+                ", saveCSV=" + saveCSV +
                 '}';
     }
+
+    public boolean isSaveCSV() {return saveCSV;}
 
     public int getDailyEnergyCost() {return dailyEnergyCost;}
 

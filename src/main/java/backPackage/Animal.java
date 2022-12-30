@@ -233,6 +233,16 @@ public class Animal {
         }
     }
 
+    public void rollOrient(){
+        Random roll = new Random();
+        this.currentOrient = MapDirection.values()[roll.nextInt(8)];
+    }
+
+    public void rollGeneID(){
+        Random roll = new Random();
+        this.geneid = roll.nextInt(genes.size());
+        System.out.println(geneid);
+    }
     public int getEatenGrass() {
         return eatenGrass;
     }
@@ -243,5 +253,9 @@ public class Animal {
 
     public int getOffspringAmount(){
         return offspringAmount;
+    }
+
+    public int getCurrentGene(){
+        return genes.get(geneid);
     }
 }

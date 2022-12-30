@@ -1,23 +1,27 @@
 package gui;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import java.io.FileInputStream;
+import javafx.stage.WindowEvent;
+
+import java.io.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 public class App extends Application {
 
@@ -35,19 +39,33 @@ public class App extends Application {
     private TextField genotypeLength;
     private TextField simulationTime;
     private TextField dailyEnergyCost;
-
     private TextField speed;
+    private boolean saveCSV = false;
     private ComboBox<String> mapVar;
     private ComboBox<String> behVar;
     private ComboBox<String> plantVar;
     private ComboBox<String> mutationVar;
 
+    private ComboBox<String> presets;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Text description = new Text("Please insert data required to start simulation");
+        //dodatnie tego w takiej formie z jakiegoś powodu psuje symulację nwm dlaczego
 
+        Text description = new Text("Please insert data required to start simulation or select preset");
+        presets = loadPresets();
+
+        presets.setOnAction(event -> {
+            usePreset(presets.getValue().toString());
+        });
+
+
+
+        VBox headerBox = new VBox(description , presets);
+        headerBox.setSpacing(10);
+        headerBox.setAlignment(Pos.CENTER);
 
         Text mHeigth = new Text("Map Heigth:   ");
         mHeigth.setTextAlignment(TextAlignment.CENTER);
@@ -149,18 +167,24 @@ public class App extends Application {
         HBox eCost = new HBox(dailyEcostParam,dailyEnergyCost);
         eCost.setAlignment(Pos.CENTER);
 
-        Text programmeSpeed = new Text("Set time delay:  ");
+        Text programmeSpeed = new Text("Set time delay (ms) :  ");
         programmeSpeed.setTextAlignment(TextAlignment.CENTER);
         speed = new TextField();
         speed.setMaxWidth(100);
         HBox pSpeed = new HBox(programmeSpeed,speed);
         pSpeed.setAlignment(Pos.CENTER);
 
+        CheckBox CSVtick = new CheckBox("Save data to CSV file");
+        CSVtick.setOnAction(event -> {
+            saveCSV= !saveCSV;
+        });
+
         VBox params = new VBox();
-        params.getChildren().addAll(description,mapH , mapW ,gSpawn , gEnergy , gGrowth , aSpawn, eStart ,
-                bEnergy , bCost, minMut ,maxMut , genLen , sTime , eCost, pSpeed);
+        params.getChildren().addAll(mapH , mapW ,gSpawn , gEnergy , gGrowth , aSpawn, eStart ,
+                bEnergy , bCost, minMut ,maxMut , genLen , sTime , eCost, pSpeed , CSVtick);
 
         params.setAlignment(Pos.CENTER);
+        params.setSpacing(5);
 
         Text mapVariant = new Text("Select map variant");
         mapVar = new ComboBox<String>();
@@ -191,6 +215,7 @@ public class App extends Application {
 
         HBox variants = new HBox(mapV,behaviorV,plantV,mutV);
         variants.setAlignment(Pos.CENTER);
+        variants.setSpacing(5);
 
         Button startButton = new Button("Start Simulation");
         startButton.setOnAction(event -> {
@@ -208,11 +233,22 @@ public class App extends Application {
         VBox buttons = new VBox(startButton);
         buttons.setAlignment(Pos.CENTER);
 
-        VBox root = new VBox(params , variants , buttons);
-        Scene ParamScreen = new Scene(root , 600 , 600, Color.LIGHTGREEN);
+
+
+
+        VBox root = new VBox(headerBox,params , variants , buttons);
+        root.setSpacing(15);
+        Scene ParamScreen = new Scene(root , 600 , 650, Color.LIGHTGREEN);
         primaryStage.setScene(ParamScreen);
         primaryStage.setTitle("Evolution Simulator");
         primaryStage.getIcons().add(new Image(new FileInputStream("src/main/resources/EvolutionIcon.png")));
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent t) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
         primaryStage.show();
 
     }
@@ -233,18 +269,69 @@ public class App extends Application {
                 Integer.parseInt(simulationTime.getText()),
                 Integer.parseInt(dailyEnergyCost.getText()),
                 Integer.parseInt(speed.getText()),
-                readComboBox(mapVar),
-                readComboBox(behVar),
-                readComboBox(plantVar),
-                readComboBox(mutationVar));
+                readVariantBox(mapVar),
+                readVariantBox(behVar),
+                readVariantBox(plantVar),
+                readVariantBox(mutationVar),saveCSV);
     }
-    public int readComboBox(ComboBox<String> box){
+    public int readVariantBox(ComboBox<String> box){
         if (box.getSelectionModel().isSelected(0)){
             return 0;
         }
         return 1;
     }
 
+    public void setComboBoxValue(ComboBox<String> box , int index){
+        box.getSelectionModel().select(index);
+    }
 
+    public ComboBox<String> loadPresets(){
+        ComboBox<String> loaded = new ComboBox<String>();
+        List<String> psets = Stream.of(Objects.requireNonNull(new File("./src/main/resources/SimulationPresets").listFiles()))
+                .filter(file -> !file.isDirectory())
+                .map(File::getName).toList();
+        for (String preset : psets){
+            loaded.getItems().add(preset);
+        }
+        return loaded;
+    }
+
+    public void usePreset(String file){
+
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader("./src/main/resources/SimulationPresets/" + file));
+
+            mapHeight.setText(reader.readLine());
+            mapWidth.setText(reader.readLine());
+            grassAmount.setText(reader.readLine());
+            grassEnergyBoost.setText(reader.readLine());
+            dailyGrassGrowth.setText(reader.readLine());
+            animalAmount.setText(reader.readLine());
+            startingEnergy.setText(reader.readLine());
+            minBreedEnergy.setText(reader.readLine());
+            breedEnergyLoss.setText(reader.readLine());
+            minMutation.setText(reader.readLine());
+            maxMutation.setText(reader.readLine());
+            genotypeLength.setText(reader.readLine());
+            simulationTime.setText(reader.readLine());
+            dailyEnergyCost.setText(reader.readLine());
+            speed.setText(reader.readLine());
+
+            int mVar = Integer.parseInt(reader.readLine());
+            setComboBoxValue(mapVar,mVar);
+
+            int bVar = Integer.parseInt(reader.readLine());
+            setComboBoxValue(behVar,bVar);
+
+            int pVar = Integer.parseInt(reader.readLine());
+            setComboBoxValue(plantVar,pVar);
+
+            int mutVar = Integer.parseInt(reader.readLine());
+            setComboBoxValue(mutationVar,mutVar);
+
+        }catch (IOException e){
+            System.out.println(e);
+        }
+    }
 
 }
