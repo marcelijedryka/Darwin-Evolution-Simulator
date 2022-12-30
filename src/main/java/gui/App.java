@@ -221,7 +221,7 @@ public class App extends Application {
         startButton.setOnAction(event -> {
             try {
                 ParameterHolder x = getParams();
-                System.out.println(x);
+//                System.out.println(x);
                 VisualizationApp visualizer = new VisualizationApp(x);
                 visualizer.start(new Stage());
             }catch(Exception e){

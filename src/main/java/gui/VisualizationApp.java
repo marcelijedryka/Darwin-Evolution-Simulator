@@ -228,15 +228,21 @@ public class VisualizationApp implements IMapObserver {
             spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
         }
 
-        //Pokazywanie ile energi ma dane zwierzę
+        //Pokazywanie ile energii ma dane zwierzę
 
         for(Map.Entry<Vector2d, PriorityQueue<Animal>> entry : field.getAnimalMap().entrySet()){
             Vector2d position = entry.getKey();
             Animal animal = entry.getValue().peek();
 
 
-            if(animal != null && animal.equals(selected)){
+            assert animal != null;
+            if(animal.equals(selected)){
                 spaceVisualisation.setFill(Color.RED);
+                spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
+            }
+
+            else if (animal.theSameGenes(engine.getBestGenes())){
+                spaceVisualisation.setFill(Color.BLUE);
                 spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
             }
 

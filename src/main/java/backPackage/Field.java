@@ -63,21 +63,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
                 deathCountMap.put(new Vector2d(x, y), 0);
             }
         }
-//        int amount = 0;
-//        Random random = new Random();
-//        while(amount != width*height){
-//            int x = random.nextInt(width);
-//            int y = random.nextInt(height);
-//            Vector2d vector = new Vector2d(x, y);
-//            if (!deathCountMap.containsKey(vector)) {
-//                deathCountMap.put(vector, 0);
-//                amount += 1;
-//            }
-//        }
         generateNewGrass(grassAmount);
-
-
-
     }
 
     public void generateNewGrass(int amount){
@@ -123,13 +109,37 @@ public class Field implements IWorldMap, IPositionChangeObserver {
             }
         }
         else if (grassVariant == 1){
-//          Wariant skażonych pól, początkowy pas niepożądany
+//          Wariant skażonych pól
             List<Vector2d> sortedPositions = deathCountMap.entrySet().stream()
                     .sorted(Map.Entry.comparingByValue())
                     .map(Map.Entry::getKey).toList();
+
+
+            int lowestCount = 0;
+            int lowestValue = Integer.MAX_VALUE;
+// Iterate through the map to find the lowest value
+            for (Map.Entry<Vector2d, Integer> entry : deathCountMap.entrySet()) {
+                int value = entry.getValue();
+                if (value < lowestValue) {
+                    lowestValue = value;
+                }
+            }
+// Iterate through the map again to count how many values match the lowest value
+            for (Map.Entry<Vector2d, Integer> entry : deathCountMap.entrySet()) {
+                int value = entry.getValue();
+                if (value == lowestValue) {
+                    lowestCount++;
+                }
+            }
+
+
             int i = 0;
-            int preferableAmountSize = (sortedPositions.size() * 2) / 10;
+            int preferableAmountSize = lowestCount;
+            if (preferableAmountSize <  (sortedPositions.size() * 2) / 10) {
+                preferableAmountSize = (sortedPositions.size() * 2) / 10;
+            }
             int unpreferableAmountSize = sortedPositions.size() - preferableAmountSize;
+
             Random roll = new Random();
             while (i < amount) {
                 if (grassMap.size() == width * height) break;
@@ -141,7 +151,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
                         i++;
                     }
                 }
-                else{
+                else if (unpreferableAmountSize > 0){
                     Vector2d position = sortedPositions.get(preferableAmountSize + roll.nextInt(unpreferableAmountSize));
                     if (!isOccupiedByGrass(position)) {
                         grassMap.put(position, new Grass(position));
@@ -149,6 +159,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
                     }
                 }
             }
+
         }
     }
 

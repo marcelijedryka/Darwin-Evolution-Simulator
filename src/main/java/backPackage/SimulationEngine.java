@@ -137,7 +137,10 @@ public class SimulationEngine implements IEngine, Runnable {
         for(Animal animal : animals){
             energy = energy + animal.getEnergy();
         }
-        return energy / animals.size();
+        if(animals.size() != 0) {
+            return (float) ((int) (energy * 10 / (float)animals.size())) / 10;
+        }
+        return 0;
     }
 
     public void setPause(boolean pause) {
