@@ -200,7 +200,7 @@ public class VisualizationApp implements IMapObserver {
         HBox lifeBox = new HBox(avLifeTime,avgLifeTime);
         lifeBox.setAlignment(Pos.CENTER);
 
-        Text mostPopGenome = new Text("Most popular genome: ");
+        Text mostPopGenome = new Text("Most popular genome(blue): ");
         mostPopGenome.setTextAlignment(TextAlignment.CENTER);
         mostPopGenome.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         mostPopularGenotype = new Text("-");
@@ -293,7 +293,7 @@ public class VisualizationApp implements IMapObserver {
 
     private VBox initBoxForSelectedAnimal(){
 
-        Text headline = new Text("Statistics of chosen animal: ");
+        Text headline = new Text("Statistics of chosen animal(red): ");
         headline.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         HBox headlineBox = new HBox(headline);
         headlineBox.setAlignment(Pos.CENTER);

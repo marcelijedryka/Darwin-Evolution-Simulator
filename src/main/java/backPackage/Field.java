@@ -95,12 +95,16 @@ public class Field implements IWorldMap, IPositionChangeObserver {
                     int y;
 
                     if (up_down == 1) {
-                        y = roll.nextInt(height / 2 - beltSize);
+                        if (height/2 - beltSize > 0) {
+                            y = roll.nextInt(height / 2 - beltSize);
+                        }
+                        else y = 0;
                     } else {
                         y = roll.nextInt(height / 2 - beltSize) + (height / 2 + beltSize);
                     }
                     int x = roll.nextInt(width);
                     position = new Vector2d(x, y);
+
                 }
                 if (!isOccupiedByGrass(position)) {
                     grassMap.put(position, new Grass(position));
@@ -230,7 +234,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
     @Override
     public void randomPlace(Animal animal) {
         Random roll = new Random();
-        Vector2d position = new Vector2d(roll.nextInt(width - 1) , roll.nextInt(height - 1));
+        Vector2d position = new Vector2d(roll.nextInt(width) , roll.nextInt(height));
         animal.setCurrentPos(position);
         /*
         * Jeśli nie ma zwierzaka na danej pozycji, to tworzę TreeSeta dla klucza o tej pozycji
