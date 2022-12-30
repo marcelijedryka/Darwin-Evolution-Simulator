@@ -121,14 +121,14 @@ public class Field implements IWorldMap, IPositionChangeObserver {
 
             int lowestCount = 0;
             int lowestValue = Integer.MAX_VALUE;
-// Iterate through the map to find the lowest value
+            // Iterate through the map to find the lowest value
             for (Map.Entry<Vector2d, Integer> entry : deathCountMap.entrySet()) {
                 int value = entry.getValue();
                 if (value < lowestValue) {
                     lowestValue = value;
                 }
             }
-// Iterate through the map again to count how many values match the lowest value
+            // Iterate through the map again to count how many values match the lowest value
             for (Map.Entry<Vector2d, Integer> entry : deathCountMap.entrySet()) {
                 int value = entry.getValue();
                 if (value == lowestValue) {
