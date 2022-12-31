@@ -41,8 +41,8 @@ public class VisualizationApp implements IMapObserver {
     private Text mostPopularGenotype;
     private int buttonType;
 
-    private int windowWidth = 1400;
-    private int windowHeight = 750;
+    private final int windowWidth = 1400;
+    private final int windowHeight = 750;
 
     private Text genome;
     private Text energyLevel;
