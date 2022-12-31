@@ -160,12 +160,14 @@ public class ParameterHolder {
         if (mapHeight < 0 || mapWidth < 0 || 0 > grassAmount || 0 > grassEnergyBoost || 0 > dailyGrassGrowth || 0 > animalAmount
                 || 0 > startingEnergy || 0 > minBreedEnergy || 0 > breedEnergyLoss || 0 > minMutation || 0 > maxMutation
                 || 0 > genotypeLength || 0 > mapVar || 0 > behVar || 0 > plantVar || 0 > mutationVar || 0 > speed) {
-            errorString = "Value can't be smaller than 0";
+            errorString = "Values can't be smaller than 0";
+            return false;
         }
 
         if (mapHeight == 0 || mapWidth == 0 || 0 == grassEnergyBoost || 0 == animalAmount
                 || 0 == startingEnergy || 0 == genotypeLength || 0 == speed) {
             errorString = "Value can't be equal to 0";
+            return false;
         }
 
         if (grassAmount > mapWidth * mapHeight) {
@@ -188,43 +190,6 @@ public class ParameterHolder {
             errorString = "The maximum mutation length can't be greater than genotype length";
             return false;
         }
-        if (speed <= 0 ){
-            errorString = "Simulation delay must be greater than 0";
-            return false;
-        }
-        if(dailyEnergyCost < 0){
-            errorString = "Daily energy cost must be grater than 0";
-            return false;
-        }
-        if (minMutation < 0 ){
-            errorString = "Mutation parameters can not be negative";
-            return false;
-        }
-        if(simulationTime <= 0){
-            errorString = "Simulation time must be greater than 0";
-            return false;
-        }
-        if(animalAmount < 0){
-            errorString = "Animal amount can not be negative";
-            return false;
-        }
-        if (grassAmount < 0){
-            errorString = "Initial amount of plants can not be negative";
-            return false;
-        }
-        if (grassEnergyBoost < 0){
-            errorString = "Energy gained from grass can not be negative";
-            return false;
-        }
-        if (minBreedEnergy < 0){
-            errorString = "Energy required to breed can not be negative";
-            return false;
-        }
-        if (breedEnergyLoss < 0){
-            errorString = "Breeding cost can not be negative";
-            return false;
-        }
-
 
         return true;
     }
