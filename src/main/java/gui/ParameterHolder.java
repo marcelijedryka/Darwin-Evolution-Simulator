@@ -196,7 +196,7 @@ public class ParameterHolder {
         int height = mapHeight;
         int width = mapWidth;
         if (width > height) {
-            squareSize = (int) (0.7 * 1400) / width;
+            squareSize = (int) (0.64 * 1400) / width;
         } else {
             squareSize = 750 / height;
         }

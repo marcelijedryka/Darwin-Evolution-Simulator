@@ -170,7 +170,7 @@ public class VisualizationApp implements IMapObserver {
         int height = field.getHeight();
         int width = field.getWidth();
         if (width > height) {
-            squareSize = (int) (0.7 * windowWidth) / width;
+            squareSize = (int) (0.64 * windowWidth) / width;
         } else {
             squareSize = windowHeight / height;
         }
