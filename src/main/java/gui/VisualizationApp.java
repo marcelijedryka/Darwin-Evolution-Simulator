@@ -32,7 +32,7 @@ public class VisualizationApp implements IMapObserver {
     private Canvas space;
     private GraphicsContext spaceVisualisation;
     private VBox leftSide;
-    private Text currentYear;
+    private Text currentDay;
     private Text animalAmount;
     private Text grassAmount;
     private Text emptyLand;
@@ -179,12 +179,12 @@ public class VisualizationApp implements IMapObserver {
 
     public VBox createStatBox(){
 
-        Text year = new Text("Year : ");
+        Text year = new Text("Day : ");
         year.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         year.setTextAlignment(TextAlignment.CENTER);
-        currentYear = new Text("-");
-        currentYear.setTextAlignment(TextAlignment.CENTER);
-        HBox yearBox = new HBox(year,currentYear);
+        currentDay = new Text("-");
+        currentDay.setTextAlignment(TextAlignment.CENTER);
+        HBox yearBox = new HBox(year,currentDay);
         yearBox.setAlignment(Pos.CENTER);
 
         Text aAmount = new Text("Animals on the map : ");
@@ -289,8 +289,8 @@ public class VisualizationApp implements IMapObserver {
     }
 
     public void showStats(){
-        currentYear.setText(String.valueOf(engine.getCurrentYear()));
-        currentYear.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
+        currentDay.setText(String.valueOf(engine.getCurrentYear()));
+        currentDay.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
 
         animalAmount.setText(String.valueOf(field.getAnimalMap().size()));
         animalAmount.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
