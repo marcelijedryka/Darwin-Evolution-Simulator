@@ -90,9 +90,10 @@ public class SimulationEngine implements IEngine, Runnable {
                     }
 
                 }
-                map.generateNewGrass(map.getNewGrassAmount());
+
                 map.checkPossibleEating();
                 map.checkPossibleBreed();
+                map.generateNewGrass(map.getNewGrassAmount());
                 freeFields = map.calculateFreeFields();
                 avgEnergy = calculateAvgEnergy();
                 map.notifyObserver();
