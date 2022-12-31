@@ -6,34 +6,25 @@ import java.util.Random;
 
 public class Animal {
 
-
     private Vector2d currentPos;
     private ArrayList<Integer> genes;
     private MapDirection currentOrient;
-
     private int geneid;
-
     private boolean dead = false;
-
     private int energy;
     private final Field map;
-    private final int startingEnergy;
     private final int loss;
     private int lifeTime;
-
     private int eatenGrass;
-
     private int offspringAmount;
     private final SimulationEngine engine;
-
-    private ArrayList<IPositionChangeObserver> observerList;
+    private final ArrayList<IPositionChangeObserver> observerList;
 
     public Animal(Field map, int energy , int genotypeLength , int energyLoss ,SimulationEngine engine){
         Random random = new Random();
         int startingOrientInt = random.nextInt(8);
         this.currentOrient = MapDirection.values()[startingOrientInt];
         this.energy = energy;
-        this.startingEnergy = energy;
         this.map = map;
         this.geneid = 0;
         this.loss = energyLoss;
@@ -49,53 +40,11 @@ public class Animal {
     void addObserver(IPositionChangeObserver observer){
         observerList.add(observer);
     }
-    void removeObservers(IPositionChangeObserver observer){
-        this.observerList = null;
-    }
+
     void positionChanged(Vector2d oldPosition, Vector2d newPosition){
         for(IPositionChangeObserver observer: observerList){
             observer.positionChanged(this, oldPosition, newPosition);
         }
-    }
-
-    public int getLifeTime() {
-        return lifeTime;
-    }
-
-    public MapDirection getCurrentOrient() {
-        return currentOrient;
-    }
-
-    public int getGeneid() {
-        return geneid;
-    }
-
-    public int getStartingEnergy() {
-        return startingEnergy;
-    }
-
-    public SimulationEngine getEngine() {
-        return engine;
-    }
-
-    public boolean isDead() {
-        return dead;
-    }
-
-    public Field getMap() {
-        return map;
-    }
-
-    public int getLoss() {
-        return loss;
-    }
-
-    public ArrayList<IPositionChangeObserver> getObserverList() {
-        return observerList;
-    }
-
-    public ArrayList<Integer> getGenes() {
-        return genes;
     }
 
     public boolean theSameGenes(ArrayList<Integer> otherGenes){
@@ -119,13 +68,6 @@ public class Animal {
         this.currentPos = position;
     }
 
-    public Vector2d getCurrentPos() {
-        return currentPos;
-    }
-
-    public int getEnergy() {
-        return energy;
-    }
 
     public String toString() {
         return switch (currentOrient) {
@@ -141,26 +83,9 @@ public class Animal {
 
     }
 
-    public void energyLoss(int energyLoss){
-        energy = energy - energyLoss;
-        if (energy <= 0){
-            this.dead = true;
-            this.energy = 0;
-            map.updateAvgLifetime(this.lifeTime);
-        }
-    }
-
-    public void energyGain(int energyGain){
-        energy = energy + energyGain;
-        eatenGrass += 1;
-    }
 
 
     public void move() {
-
-
-
-        //Ogranie wariantów ruchów zwierzęcia
 
         if (map.getAnimalMoveVariant() == 1){
             Random roll = new Random();
@@ -187,10 +112,6 @@ public class Animal {
             case WEST -> position =position.add(new Vector2d(-1, 0));
             case NORTHWEST -> position =position.add(new Vector2d(-1, 1));
         }
-//        if (map.objectAt(position) instanceof Grass) {
-//            this.energy = this.energy + map.eatGrass(position);
-//        }
-
 
         if(map.getMapVariant() == 1) {
             if (map.canMoveTo(position)) {
@@ -244,9 +165,18 @@ public class Animal {
         }
     }
 
-    public void rollOrient(){
-        Random roll = new Random();
-        this.currentOrient = MapDirection.values()[roll.nextInt(8)];
+    public void energyLoss(int energyLoss){
+        energy = energy - energyLoss;
+        if (energy <= 0){
+            this.dead = true;
+            this.energy = 0;
+            map.updateAvgLifetime(this.lifeTime);
+        }
+    }
+
+    public void energyGain(int energyGain){
+        energy = energy + energyGain;
+        eatenGrass += 1;
     }
 
     public void rollGeneID(){
@@ -267,5 +197,37 @@ public class Animal {
 
     public int getCurrentGene(){
         return genes.get(geneid);
+    }
+
+    public Vector2d getCurrentPos() {
+        return currentPos;
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public int getLifeTime() {
+        return lifeTime;
+    }
+
+    public SimulationEngine getEngine() {
+        return engine;
+    }
+
+    public boolean isDead() {
+        return dead;
+    }
+
+    public Field getMap() {
+        return map;
+    }
+
+    public int getLoss() {
+        return loss;
+    }
+
+    public ArrayList<Integer> getGenes() {
+        return genes;
     }
 }

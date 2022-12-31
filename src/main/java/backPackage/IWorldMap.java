@@ -27,16 +27,6 @@ public interface IWorldMap {
     Object objectAt(Vector2d position);
 
     /**
-     * Returns lowLeft Vector.
-     */
-    Vector2d getLowLeft();
-
-    /**
-     * Returns upRight Vector.
-     */
-    Vector2d getUpRight();
-
-    /**
      * Removes grass from position and return amount of energy it gets.
      */
     int eatGrass(Vector2d position);

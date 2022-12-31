@@ -3,16 +3,8 @@ package backPackage;
 import java.util.*;
 
 public class Field implements IWorldMap, IPositionChangeObserver {
-
-
-    private final Vector2d lowLeft;
-
-    private final Vector2d upRight;
-
     private final int energyBoost;
-
     private final int newGrassAmount;
-
     private final int height;
     private final int width;
     private final int minMutation;
@@ -26,7 +18,6 @@ public class Field implements IWorldMap, IPositionChangeObserver {
     private int deadAnimals;
     private int yearsLivedSummary;
     private final int grassVariant;
-
     Map<Vector2d, Integer> deathCountMap;
 
     protected HashMap<Vector2d, PriorityQueue<Animal>> animalMap;
@@ -40,8 +31,6 @@ public class Field implements IWorldMap, IPositionChangeObserver {
         this.GenotypeVariant = GenotypeVariant;
         this.width = width;
         this.height = height;
-        this.lowLeft = new Vector2d(0, 0);
-        this.upRight = new Vector2d(height - 1, width - 1);
         this.newGrassAmount = newGrassAmount;
         this.energyBoost = energyBoost;
         this.animalMap = new HashMap<>();
@@ -57,6 +46,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
         this.deadAnimals = 0;
         this.yearsLivedSummary = 0;
         this.deathCountMap = new HashMap<>();
+
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 deathCountMap.put(new Vector2d(x, y), 0);
@@ -172,16 +162,8 @@ public class Field implements IWorldMap, IPositionChangeObserver {
         }
     }
 
-    public int getEnergyBoost() {
-        return energyBoost;
-    }
-
     public int getNewGrassAmount() {
         return newGrassAmount;
-    }
-
-    public int getMinBreedEnergy() {
-        return minBreedEnergy;
     }
 
     public int getBreedEnergyLoss() {
@@ -217,16 +199,6 @@ public class Field implements IWorldMap, IPositionChangeObserver {
     }
 
     @Override
-    public Vector2d getLowLeft() {
-        return lowLeft;
-    }
-
-    @Override
-    public Vector2d getUpRight() {
-        return upRight;
-    }
-
-    @Override
     public boolean canMoveTo(Vector2d position) {
         return position.getX() >= 0 && position.getX() < this.width && position.getY() >= 0 && position.getY() < this.height;
     }
@@ -241,18 +213,10 @@ public class Field implements IWorldMap, IPositionChangeObserver {
         Random roll = new Random();
         Vector2d position = new Vector2d(roll.nextInt(width), roll.nextInt(height));
         animal.setCurrentPos(position);
-        /*
-         * Jeśli nie ma zwierzaka na danej pozycji, to tworzę TreeSeta dla klucza o tej pozycji
-         * Niezależnie od tego if'a, potem dodaje na TreeSecie z klucza position animala/
-         */
         insertAnimal(animal, position);
     }
 
     public void parentPlace(Animal child, Animal parent) {
-        /*
-         * Skoro dzieciak rodzi się na miejscu parent'a, to na pewno musi być już ten klucz w animalMap,
-         * więc nie trzeba sprawdzać tego, co przy Place'owaniu na starcie
-         */
         animalMap.get(parent.getCurrentPos()).add(child);
     }
 
@@ -266,9 +230,7 @@ public class Field implements IWorldMap, IPositionChangeObserver {
 
     @Override
     public boolean isOccupied(Vector2d position) {
-        /*
-         * Pierwszeństwo ma zwierzak - prawdopodobnie nieistotne (?)
-         */
+
         if (isOccupiedByAnimal(position)) {
             return isOccupiedByAnimal(position);
         } else if (isOccupiedByGrass(position)) {
@@ -294,17 +256,6 @@ public class Field implements IWorldMap, IPositionChangeObserver {
         return energyBoost;
     }
 
-    @Override
-    public String toString() {
-        MapVisualizer draw = new MapVisualizer(this);
-        return draw.draw(lowLeft, upRight);
-    }
-
-    public Vector2d rollPosition() {
-        Random roll = new Random();
-        return new Vector2d(roll.nextInt(height), roll.nextInt(width));
-    }
-
     public int getGenotypeVariant() {
         return GenotypeVariant;
     }
@@ -327,10 +278,6 @@ public class Field implements IWorldMap, IPositionChangeObserver {
 
     public int getMapVariant() {
         return mapVariant;
-    }
-
-    public int getGrassVariant() {
-        return grassVariant;
     }
 
     public void checkPossibleEating() {

@@ -43,7 +43,6 @@ public class VisualizationApp implements IMapObserver {
 
     private final int windowWidth = 1400;
     private final int windowHeight = 750;
-
     private Text genome;
     private Text energyLevel;
     private Text consumptionAmount;
@@ -51,7 +50,6 @@ public class VisualizationApp implements IMapObserver {
     private Text age;
     private Text isAlive;
     private Text currentGene;
-
     private Animal selected = null;
 
     public VisualizationApp(ParameterHolder params){
@@ -84,7 +82,7 @@ public class VisualizationApp implements IMapObserver {
         Button stopButton = new Button("Pause");
         stopButton.setLayoutX(400);
         stopButton.setLayoutY(100);
-        Button dominantGenomeButton = new Button("See the dominant genome");
+        Button dominantGenomeButton = new Button("Show the dominant genome");
         dominantGenomeButton.setLayoutX(400);
         dominantGenomeButton.setLayoutY(100);
         dominantGenomeButton.setVisible(false);
@@ -117,7 +115,7 @@ public class VisualizationApp implements IMapObserver {
         this.leftSide = new VBox(stats,stopButton, dominantGenomeButton, selectedAnimalBox);
         leftSide.setAlignment(Pos.CENTER);
         leftSide.setSpacing(30);
-        leftSide.setLayoutX(10);
+        leftSide.setLayoutX(120);
         leftSide.setLayoutY(70);
 
 
@@ -133,8 +131,7 @@ public class VisualizationApp implements IMapObserver {
         EventHandler<MouseEvent> mouseHit = event -> {
             Vector2d position = new Vector2d((int)(event.getX()/squareSize), (int) event.getY()/squareSize);
             Object thing =  field.objectAt(position);
-            if (thing instanceof Animal) {
-                Animal preSelected = (Animal) thing;
+            if (thing instanceof Animal preSelected) {
                 if (selected!=null && (preSelected.getCurrentPos() == selected.getCurrentPos())){
                     selected = null;
                     updateMap();
@@ -152,6 +149,9 @@ public class VisualizationApp implements IMapObserver {
         Group root = new Group(leftSide, canvasBox);
         Scene scene = new Scene(root, windowWidth, windowHeight);
         engineThread.start();
+        primaryStage.setOnCloseRequest(event -> {
+            engine.shut();
+        });
         primaryStage.setScene(scene);
         primaryStage.show();
     }

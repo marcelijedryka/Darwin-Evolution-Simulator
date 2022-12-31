@@ -2,29 +2,29 @@ package gui;
 
 public class ParameterHolder {
 
-    private int mapHeight;
-    private int mapWidth;
-    private int grassAmount;
-    private int grassEnergyBoost;
-    private int dailyGrassGrowth;
-    private int animalAmount;
-    private int startingEnergy;
-    private int minBreedEnergy;
-    private int breedEnergyLoss;
-    private int minMutation;
-    private int maxMutation;
-    private int genotypeLength;
-    private int simulationTime;
-    private int dailyEnergyCost;
-    private int mapVar;
-    private int behVar;
-    private int plantVar;
-    private int mutationVar;
-    private int speed;
+    private final int mapHeight;
+    private final int mapWidth;
+    private final int grassAmount;
+    private final int grassEnergyBoost;
+    private final int dailyGrassGrowth;
+    private final int animalAmount;
+    private final int startingEnergy;
+    private final int minBreedEnergy;
+    private final int breedEnergyLoss;
+    private final int minMutation;
+    private final int maxMutation;
+    private final int genotypeLength;
+    private final int simulationTime;
+    private final int dailyEnergyCost;
+    private final int mapVar;
+    private final int behVar;
+    private final int plantVar;
+    private final int mutationVar;
+    private final int speed;
 
     private String errorString;
 
-    private boolean saveCSV;
+    private final boolean saveCSV;
 
     public ParameterHolder(int mapHeight, int mapWidth, int grassAmount, int grassEnergyBoost,
                            int dailyGrassGrowth, int animalAmount, int startingEnergy, int minBreedEnergy,
@@ -188,6 +188,43 @@ public class ParameterHolder {
             errorString = "The maximum mutation length can't be greater than genotype length";
             return false;
         }
+        if (speed <= 0 ){
+            errorString = "Simulation delay must be greater than 0";
+            return false;
+        }
+        if(dailyEnergyCost < 0){
+            errorString = "Daily energy cost must be grater than 0";
+            return false;
+        }
+        if (minMutation < 0 ){
+            errorString = "Mutation parameters can not be negative";
+            return false;
+        }
+        if(simulationTime <= 0){
+            errorString = "Simulation time must be greater than 0";
+            return false;
+        }
+        if(animalAmount < 0){
+            errorString = "Animal amount can not be negative";
+            return false;
+        }
+        if (grassAmount < 0){
+            errorString = "Initial amount of plants can not be negative";
+            return false;
+        }
+        if (grassEnergyBoost < 0){
+            errorString = "Energy gained from grass can not be negative";
+            return false;
+        }
+        if (minBreedEnergy < 0){
+            errorString = "Energy required to breed can not be negative";
+            return false;
+        }
+        if (breedEnergyLoss < 0){
+            errorString = "Breeding cost can not be negative";
+            return false;
+        }
+
 
         return true;
     }
