@@ -1,8 +1,5 @@
 package gui;
 
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-
 public class ParameterHolder {
 
     private int mapHeight;
@@ -25,12 +22,14 @@ public class ParameterHolder {
     private int mutationVar;
     private int speed;
 
+    private String errorString;
+
     private boolean saveCSV;
 
-    public ParameterHolder(int mapHeight,int mapWidth,int grassAmount,int grassEnergyBoost,
-                           int dailyGrassGrowth,int animalAmount,int startingEnergy,int minBreedEnergy,
+    public ParameterHolder(int mapHeight, int mapWidth, int grassAmount, int grassEnergyBoost,
+                           int dailyGrassGrowth, int animalAmount, int startingEnergy, int minBreedEnergy,
                            int breedEnergyLoss, int minMutation, int maxMutation, int genotypeLength, int simulationTime,
-                           int dailyEnergyCost, int speed ,int mapVar, int behVar, int plantVar, int mutationVar , boolean saveCSV){
+                           int dailyEnergyCost, int speed, int mapVar, int behVar, int plantVar, int mutationVar, boolean saveCSV) {
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         this.grassAmount = grassAmount;
@@ -77,11 +76,17 @@ public class ParameterHolder {
                 '}';
     }
 
-    public boolean isSaveCSV() {return saveCSV;}
+    public boolean isSaveCSV() {
+        return saveCSV;
+    }
 
-    public int getDailyEnergyCost() {return dailyEnergyCost;}
+    public int getDailyEnergyCost() {
+        return dailyEnergyCost;
+    }
 
-    public int getSimulationTime() {return simulationTime;}
+    public int getSimulationTime() {
+        return simulationTime;
+    }
 
     public int getMapHeight() {
         return mapHeight;
@@ -147,5 +152,47 @@ public class ParameterHolder {
         return mutationVar;
     }
 
-    public int getSpeed() { return speed;}
+    public int getSpeed() {
+        return speed;
+    }
+
+    public boolean checkParameters() {
+        if (mapHeight < 0 || mapWidth < 0 || 0 > grassAmount || 0 > grassEnergyBoost || 0 > dailyGrassGrowth || 0 > animalAmount
+                || 0 > startingEnergy || 0 > minBreedEnergy || 0 > breedEnergyLoss || 0 > minMutation || 0 > maxMutation
+                || 0 > genotypeLength || 0 > mapVar || 0 > behVar || 0 > plantVar || 0 > mutationVar || 0 > speed) {
+            errorString = "Value can't be smaller than 0";
+        }
+
+        if (mapHeight == 0 || mapWidth == 0 || 0 == grassEnergyBoost || 0 == animalAmount
+                || 0 == startingEnergy || 0 == genotypeLength || 0 == speed) {
+            errorString = "Value can't be equal to 0";
+        }
+
+        if (grassAmount > mapWidth * mapHeight) {
+            errorString = "There can't be more grass than space";
+            return false;
+        }
+        if (dailyGrassGrowth > mapWidth * mapHeight) {
+            errorString = "There can't grow more grass than is space";
+            return false;
+        }
+        if (minBreedEnergy < breedEnergyLoss) {
+            errorString = "The animals can't die due to birth";
+            return false;
+        }
+        if (minMutation > maxMutation) {
+            errorString = "The minimum can't be greater than maximum mutation length";
+            return false;
+        }
+        if (genotypeLength < maxMutation) {
+            errorString = "The maximum mutation length can't be greater than genotype length";
+            return false;
+        }
+
+        return true;
+    }
+
+    public String getErrorString() {
+        return errorString;
+    }
 }

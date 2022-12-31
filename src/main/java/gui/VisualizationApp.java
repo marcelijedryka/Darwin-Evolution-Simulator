@@ -81,21 +81,40 @@ public class VisualizationApp implements IMapObserver {
         VBox selectedAnimalBox = initBoxForSelectedAnimal();
 
         this.buttonType = 1;
-        Button Stopbutton = new Button("Pause");
-        Stopbutton.setLayoutX(400);
-        Stopbutton.setLayoutY(100);
-        Stopbutton.setOnAction((ActionEvent event) -> {
+        Button stopButton = new Button("Pause");
+        stopButton.setLayoutX(400);
+        stopButton.setLayoutY(100);
+        Button dominantGenomeButton = new Button("See the dominant genome");
+        dominantGenomeButton.setLayoutX(400);
+        dominantGenomeButton.setLayoutY(100);
+        dominantGenomeButton.setVisible(false);
+        stopButton.setOnAction((ActionEvent event) -> {
             if (buttonType == 1){
                 engine.setPause(false);
-                Stopbutton.setText("Resume");
+                stopButton.setText("Resume");
+                dominantGenomeButton.setVisible(true);
                 buttonType = 0;
             }else{
                 engine.setPause(true);
-                Stopbutton.setText("Pause");
+                stopButton.setText("Pause");
+                dominantGenomeButton.setVisible(false);
                 buttonType = 1;
             }});
 
-        this.leftSide = new VBox(stats,Stopbutton, selectedAnimalBox);
+        dominantGenomeButton.setOnAction((ActionEvent event) -> {
+            for(Animal ani: engine.getAnimals()){
+                if(ani.theSameGenes(engine.getBestGenes())){
+                    Vector2d position = ani.getCurrentPos();
+                    spaceVisualisation.setFill(Color.BLUE);
+                    spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
+                }
+            }
+
+            });
+
+
+
+        this.leftSide = new VBox(stats,stopButton, dominantGenomeButton, selectedAnimalBox);
         leftSide.setAlignment(Pos.CENTER);
         leftSide.setSpacing(30);
         leftSide.setLayoutX(10);
@@ -115,7 +134,14 @@ public class VisualizationApp implements IMapObserver {
             Vector2d position = new Vector2d((int)(event.getX()/squareSize), (int) event.getY()/squareSize);
             Object thing =  field.objectAt(position);
             if (thing instanceof Animal) {
-                selected = (Animal) thing;
+                Animal preSelected = (Animal) thing;
+                if (selected!=null && (preSelected.getCurrentPos() == selected.getCurrentPos())){
+                    selected = null;
+                    updateMap();
+                }
+                else{
+                    selected = preSelected;
+                }
                 updateBoxForSelectedAnimal((Animal) thing);
                 showMapCanvas();
             }
@@ -136,6 +162,7 @@ public class VisualizationApp implements IMapObserver {
             showMapCanvas();
             showStats();
             if (selected != null) {updateBoxForSelectedAnimal(selected);}
+            else updateBoxForDeselectedAnimal();
         });
     }
 
@@ -241,11 +268,6 @@ public class VisualizationApp implements IMapObserver {
                 spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
             }
 
-            else if (animal.theSameGenes(engine.getBestGenes())){
-                spaceVisualisation.setFill(Color.BLUE);
-                spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
-            }
-
             else if (animal.getEnergy() / params.getDailyEnergyCost() >= 10){
                 spaceVisualisation.setFill(Color.WHITE);
                 spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
@@ -298,19 +320,12 @@ public class VisualizationApp implements IMapObserver {
         HBox headlineBox = new HBox(headline);
         headlineBox.setAlignment(Pos.CENTER);
 
-        Text genomeText = new Text("Genome:");
-        genomeText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
-        genome = new Text("None");
-        genome.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
-        HBox genomeTextBox = new HBox(genomeText, genome);
-        genomeTextBox.setAlignment(Pos.CENTER);
-
-        Text currentGeneText = new Text("Current gene:  ");
-        currentGeneText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
-        currentGene = new Text("None");
-        currentGene.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
-        HBox currentGeneBox = new HBox(currentGeneText , currentGene);
-        currentGeneBox.setAlignment(Pos.CENTER);
+        Text isAliveText = new Text("The animal is ");
+        isAliveText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
+        isAlive = new Text("not chosen");
+        isAlive.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
+        HBox isAliveBox = new HBox(isAliveText, isAlive);
+        isAliveBox.setAlignment(Pos.CENTER);
 
         Text energyLevelText = new Text("Energy level: ");
         energyLevelText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
@@ -340,14 +355,23 @@ public class VisualizationApp implements IMapObserver {
         HBox ageBox = new HBox(ageText, age);
         ageBox.setAlignment(Pos.CENTER);
 
-        Text isAliveText = new Text("The animal is ");
-        isAliveText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
-        isAlive = new Text("not chosen");
-        isAlive.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
-        HBox isAliveBox = new HBox(isAliveText, isAlive);
-        isAliveBox.setAlignment(Pos.CENTER);
+        Text currentGeneText = new Text("Current gene:  ");
+        currentGeneText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
+        currentGene = new Text("None");
+        currentGene.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
+        HBox currentGeneBox = new HBox(currentGeneText , currentGene);
+        currentGeneBox.setAlignment(Pos.CENTER);
 
-        return new VBox(headlineBox,genomeTextBox,currentGeneBox, energyLevelBox, consumptionBox, childrenBox, ageBox, isAliveBox);
+        Text genomeText = new Text("Genome:");
+        genomeText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
+        genome = new Text("None");
+        genome.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
+        HBox genomeTextBox = new HBox(genomeText);
+        genomeTextBox.setAlignment(Pos.CENTER);
+        HBox genomeBox = new HBox(genome);
+        genomeBox.setAlignment(Pos.CENTER);
+
+        return new VBox(headlineBox, isAliveBox, energyLevelBox, consumptionBox, childrenBox, ageBox, currentGeneBox, genomeTextBox, genomeBox);
     }
 
     private void updateBoxForSelectedAnimal(Animal animal) {
@@ -359,8 +383,18 @@ public class VisualizationApp implements IMapObserver {
         age.setText(String.valueOf(animal.getLifeTime()));
         if (!animal.isDead()){ isAlive.setText("alive");}
         else {isAlive.setText("dead");}
-
     }
+
+    private void updateBoxForDeselectedAnimal() {
+        genome.setText("None");
+        currentGene.setText("None");
+        energyLevel.setText("None");
+        consumptionAmount.setText("None");
+        offspringAmount.setText("None");
+        age.setText("None");
+        isAlive.setText("None");
+    }
+
 
 
 
