@@ -145,6 +145,7 @@ public class Animal {
         energy = energy - energyLoss;
         if (energy <= 0){
             this.dead = true;
+            this.energy = 0;
             map.updateAvgLifetime(this.lifeTime);
         }
     }

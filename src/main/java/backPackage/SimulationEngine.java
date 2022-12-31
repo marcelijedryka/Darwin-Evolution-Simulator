@@ -16,12 +16,10 @@ public class SimulationEngine implements IEngine, Runnable {
     private int freeFields;
     private float avgEnergy;
     private boolean pause = true;
-    private boolean saveToCSV;
-    private CSVSaver saver;
+    private final boolean saveToCSV;
+    private final CSVSaver saver;
 
 
-
-    // Przekazujemy mapę, długość symualcji, początkową ilość zwierząt i ile energii tracą każdego dnia
     public SimulationEngine(Field map , int evolutionTime , int animalAmount , int startEnergy , int energyLoss , int genotypeLength,
                             int speed , boolean saveToCSV) {
         this.map=map;
@@ -108,6 +106,7 @@ public class SimulationEngine implements IEngine, Runnable {
 //        System.out.println("\n" + animals.size()+ " SURVIVED "+ evolutionTime+ " ITERATIONS\n");
 //        System.out.println("_________________________________________________________________");
 
+    //już nieużyteczna pierwotna wizualizacja
     public void visualize(int time) {
         System.out.println("Number of animals: " + animals.size());
         System.out.println("Number of weed: " + map.grassMap.size());
