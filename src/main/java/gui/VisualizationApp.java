@@ -320,7 +320,7 @@ public class VisualizationApp implements IMapObserver {
         HBox headlineBox = new HBox(headline);
         headlineBox.setAlignment(Pos.CENTER);
 
-        Text isAliveText = new Text("The animal is ");
+        Text isAliveText = new Text("Animal status: ");
         isAliveText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
         isAlive = new Text("not chosen");
         isAlive.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
@@ -381,8 +381,10 @@ public class VisualizationApp implements IMapObserver {
         consumptionAmount.setText(String.valueOf(animal.getEatenGrass()));
         offspringAmount.setText(String.valueOf(animal.getOffspringAmount()));
         age.setText(String.valueOf(animal.getLifeTime()));
-        if (!animal.isDead()){ isAlive.setText("alive");}
-        else {isAlive.setText("dead");}
+        if (!animal.isDead()){ isAlive.setText("Alive");
+        isAlive.setFill(Color.GREEN);}
+        else {isAlive.setText("Dead");
+        isAlive.setFill(Color.RED);}
     }
 
     private void updateBoxForDeselectedAnimal() {
@@ -393,6 +395,7 @@ public class VisualizationApp implements IMapObserver {
         offspringAmount.setText("None");
         age.setText("None");
         isAlive.setText("None");
+        isAlive.setFill(Color.BLACK);
     }
 
 
