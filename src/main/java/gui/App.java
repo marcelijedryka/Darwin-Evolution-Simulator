@@ -18,8 +18,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.WindowEvent;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -341,9 +339,9 @@ public class App extends Application {
 
         try {
 
-            Integer id =  (Objects.requireNonNull(new File("./src/main/resources/SimulationPresets/").list()).length + 1);
+            int id =  (Objects.requireNonNull(new File("./src/main/resources/SimulationPresets/").list()).length + 1);
 
-            BufferedWriter writer = new BufferedWriter(new FileWriter("./src/main/resources/SimulationPresets/" + "Preset"+ id.toString()  + ".txt"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("./src/main/resources/SimulationPresets/" + "Preset"+ Integer.toString(id) + ".txt"));
 
             writer.write(params.getMapHeight()+ "\n");
             writer.write(params.getMapWidth()+ "\n");
