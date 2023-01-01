@@ -332,7 +332,15 @@ public class Field implements IWorldMap, IPositionChangeObserver {
     }
 
     public int calculateFreeFields() {
-        return height * width - (animalMap.size() + grassMap.size());
+        int freeSpace = 0;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (null == objectAt(new Vector2d(x,y))) {
+                    freeSpace += 1;
+                }
+            }
+        }
+        return freeSpace;
     }
 
     public void updateAvgLifetime(int animalLifeTime) {

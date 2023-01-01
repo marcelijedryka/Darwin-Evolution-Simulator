@@ -191,6 +191,23 @@ public class ParameterHolder {
             return false;
         }
 
+//        if ()
+        int squareSize = 0;
+        int height = mapHeight;
+        int width = mapWidth;
+        if (width > height) {
+            squareSize = (int) (0.64 * 1400) / width;
+        } else {
+            squareSize = 750 / height;
+        }
+
+        if (squareSize < 1){
+            errorString = "Size of the visual representation must be visible - too big map";
+            return false;
+        }
+
+
+
         return true;
     }
 
