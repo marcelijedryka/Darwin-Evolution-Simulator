@@ -202,7 +202,7 @@ public class ParameterHolder {
         }
 
         if (squareSize < 1){
-            errorString = "Size of the visual representation must be visible - too big map";
+            errorString = "Size of the visual representation must be visible - reduce map size";
             return false;
         }
 

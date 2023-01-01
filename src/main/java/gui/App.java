@@ -18,6 +18,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.WindowEvent;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -40,11 +42,11 @@ public class App extends Application {
     private TextField dailyEnergyCost;
     private TextField speed;
     private boolean saveCSV = false;
+    private boolean savePreset = false;
     private ComboBox<String> mapVar;
     private ComboBox<String> behVar;
     private ComboBox<String> plantVar;
     private ComboBox<String> mutationVar;
-
     private ComboBox<String> presets;
 
 
@@ -60,8 +62,7 @@ public class App extends Application {
             usePreset(presets.getValue().toString());
         });
 
-
-        VBox headerBox = new VBox(description, presets);
+        VBox headerBox = new VBox(description,presets);
         headerBox.setSpacing(10);
         headerBox.setAlignment(Pos.CENTER);
 
@@ -177,9 +178,18 @@ public class App extends Application {
             saveCSV = !saveCSV;
         });
 
+        CheckBox presetSaver = new CheckBox("Save preset");
+        presetSaver.setOnAction(event -> {
+            savePreset = !savePreset;
+        });
+
+        HBox tickBox = new HBox(CSVtick , presetSaver);
+        tickBox.setSpacing(10);
+        tickBox.setAlignment(Pos.CENTER);
+
         VBox params = new VBox();
         params.getChildren().addAll(mapH, mapW, gSpawn, gEnergy, gGrowth, aSpawn, eStart,
-                bEnergy, bCost, minMut, maxMut, genLen, sTime, eCost, pSpeed, CSVtick);
+                bEnergy, bCost, minMut, maxMut, genLen, sTime, eCost, pSpeed, tickBox);
 
         params.setAlignment(Pos.CENTER);
         params.setSpacing(5);
@@ -236,6 +246,9 @@ public class App extends Application {
                     errorDataStage.show();
                 }
                 else {
+                    if (savePreset){
+                        createNewPreset(x);
+                    }
                     VisualizationApp visualizer = new VisualizationApp(x);
                     visualizer.start(new Stage());
                 }
@@ -244,7 +257,7 @@ public class App extends Application {
                 Stage errorStage = new Stage();
 
                 errorStage.setTitle("INCORRECT TYPE ERROR");
-                Text errorText = new Text("IT IS ONLY ALLOWED TO USE INT\nCHECK IF ALL WINDOWS HAVE CORRECT VALUES\nPROGRAM WON'T WORK UNLESS INSERT CORRECT DATA");
+                Text errorText = new Text("IT IS ONLY ALLOWED TO USE INT\nCHECK IF ALL WINDOWS HAVE CORRECT VALUES\nPROGRAM WON'T WORK UNLESS YOU INSERT CORRECT DATA");
                 errorText.setTextAlignment(TextAlignment.CENTER);
                 errorText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
 
@@ -322,6 +335,54 @@ public class App extends Application {
             loaded.getItems().add(preset);
         }
         return loaded;
+    }
+
+    public void createNewPreset(ParameterHolder params){
+
+        try {
+
+            Integer id =  (Objects.requireNonNull(new File("./src/main/resources/SimulationPresets/").list()).length + 1);
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter("./src/main/resources/SimulationPresets/" + "Preset"+ id.toString()  + ".txt"));
+
+            writer.write(params.getMapHeight()+ "\n");
+            writer.write(params.getMapWidth()+ "\n");
+            writer.write(params.getGrassAmount()+ "\n");
+            writer.write(params.getGrassEnergyBoost()+ "\n");
+            writer.write(params.getDailyGrassGrowth()+ "\n");
+            writer.write(params.getAnimalAmount()+ "\n");
+            writer.write(params.getStartingEnergy()+ "\n");
+            writer.write(params.getMinBreedEnergy()+ "\n");
+            writer.write(params.getBreedEnergyLoss()+ "\n");
+            writer.write(params.getMinMutation()+ "\n");
+            writer.write(params.getMaxMutation()+ "\n");
+            writer.write(params.getGenotypeLength()+ "\n");
+            writer.write(params.getSimulationTime()+ "\n");
+            writer.write(params.getDailyEnergyCost()+ "\n");
+            writer.write(params.getSpeed()+ "\n");
+            writer.write(params.getMapVar()+ "\n");
+            writer.write(params.getBehVar()+ "\n");
+            writer.write(params.getPlantVar()+ "\n");
+            writer.write(params.getMutationVar()+ "\n");
+            writer.close();
+
+            updatePresets();
+
+        }catch (IOException e) {
+            System.out.print(e);
+        }
+
+
+    }
+
+    public void updatePresets(){
+      presets.getItems().clear();
+      List<String> psets = Stream.of(Objects.requireNonNull(new File("./src/main/resources/SimulationPresets").listFiles()))
+                .filter(file -> !file.isDirectory())
+                .map(File::getName).toList();
+      for (String preset : psets) {
+            presets.getItems().add(preset);
+        }
     }
 
     public void usePreset(String file) {

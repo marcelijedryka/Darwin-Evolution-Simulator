@@ -62,7 +62,7 @@ public class SimulationEngine implements IEngine, Runnable {
                 if (saveToCSV){
                     saver.addToStats(map.getAnimalMap().size() , map.getGrassMap().size(),map.calculateFreeFields(), avgEnergy , map.getAvgLifetime());
                 }
-                runYear(i);
+                runDay(i);
                 i++;
             }
             try {
@@ -76,7 +76,7 @@ public class SimulationEngine implements IEngine, Runnable {
         }
         }
 
-        public void runYear(int i){
+        public void runDay(int i){
 
                 currentYear = i + 1;
                 Iterator<Animal> iterator = animals.iterator();
