@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.Random;
 
 public class Animal {
-
     private Vector2d currentPos;
     private ArrayList<Integer> genes;
     private MapDirection currentOrient;
@@ -82,8 +81,6 @@ public class Animal {
         };
 
     }
-
-
 
     public void move() {
 

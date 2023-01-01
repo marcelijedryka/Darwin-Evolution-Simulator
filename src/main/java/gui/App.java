@@ -51,8 +51,6 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        //dodatnie tego w takiej formie z jakiegoś powodu psuje symulację nwm dlaczego
-
         Text description = new Text("Please insert data required to start simulation or select preset");
         presets = loadPresets();
 

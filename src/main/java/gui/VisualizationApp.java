@@ -277,7 +277,7 @@ public class VisualizationApp implements IMapObserver {
             }else if(animal.getEnergy() / params.getDailyEnergyCost() >= 5){
                 spaceVisualisation.setFill(Color.PERU);
                 spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
-            }else if(animal.getEnergy() / params.getDailyEnergyCost() >= 2) {
+            }else if(animal.getEnergy() / params.getDailyEnergyCost() >= 1) {
                 spaceVisualisation.setFill(Color.SADDLEBROWN);
                 spaceVisualisation.fillOval(position.getX() * squareSize, position.getY() * squareSize, squareSize, squareSize);
             }else{

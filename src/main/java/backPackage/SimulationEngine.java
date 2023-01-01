@@ -49,7 +49,7 @@ public class SimulationEngine implements IEngine, Runnable {
 
     @Override
     public void run() {
-
+        ArrayList<Animal> deadList =new ArrayList<>();
         int i = 0;
 
         while (i < evolutionTime && animals.size() > 0){
@@ -62,7 +62,7 @@ public class SimulationEngine implements IEngine, Runnable {
                 if (saveToCSV){
                     saver.addToStats(map.getAnimalMap().size() , map.getGrassMap().size(),map.calculateFreeFields(), avgEnergy , map.getAvgLifetime());
                 }
-                runDay(i);
+                runDay(i,deadList);
                 i++;
             }
             try {
@@ -76,8 +76,11 @@ public class SimulationEngine implements IEngine, Runnable {
         }
         }
 
-        public void runDay(int i){
-
+        public void runDay(int i , ArrayList<Animal> deadlist){
+                for(Animal deadAnimal : deadlist){
+                    map.removeAnimal(deadAnimal);
+                }
+                deadlist.clear();
                 currentYear = i + 1;
                 Iterator<Animal> iterator = animals.iterator();
                 while (iterator.hasNext()) {
@@ -86,7 +89,7 @@ public class SimulationEngine implements IEngine, Runnable {
                     currentAnimal.energyLoss(currentAnimal.getLoss());
                     if (currentAnimal.isDead()) {
                         iterator.remove();
-                        map.removeAnimal(currentAnimal);
+                        deadlist.add(currentAnimal);
                     }
 
                 }
